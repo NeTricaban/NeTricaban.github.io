@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMaker - Генератор битов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #e94560;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .preview {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #0fccce;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        select, input, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        select:focus, input:focus {
+            outline: 2px solid #e94560;
+        }
+        
+        button {
+            background: #e94560;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #ff2e63;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+        
+        .visualizer {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .visualizer-bar {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            background: #0fccce;
+            border-radius: 5px 5px 0 0;
+            transition: height 0.1s ease;
+        }
+        
+        .beat-info {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .beat-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #0fccce;
+        }
+        
+        .bpm-display {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .genre-tag {
+            display: inline-block;
+            background: rgba(233, 69, 96, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .player-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .player-controls button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        .beats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .beat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .beat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .saved-beats h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            opacity: 0.7;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .volume-control label {
+            margin-bottom: 0;
+            min-width: 60px;
+        }
+        
+        .volume-control input {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .player-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .player-controls button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BeatMaker</h1>
+            <p class="tagline">Создавайте уникальные биты в различных жанрах</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="controls">
+                <div class="control-group">
+                    <h2>Настройки бита</h2>
+                    <label for="genre">Жанр</label>
+                    <select id="genre">
+                        <option value="hiphop">Хип-Хоп</option>
+                        <option value="trap">Трэп</option>
+                        <option value="russianrap">Русский рэп</option>
+                        <option value="drill">Дрилл</option>
+                        <option value="electronic">Электроника</option>
+                        <option value="random">Случайный</option>
+                    </select>
+                    
+                    <label for="bpm">BPM (скорость)</label>
+                    <input type="range" id="bpm" min="60" max="200" value="120">
+                    <span id="bpm-value">120 BPM</span>
+                    
+                    <label for="intensity">Интенсивность</label>
+                    <input type="range" id="intensity" min="1" max="10" value="5">
+                    <span id="intensity-value">5/10</span>
+                    
+                    <div class="volume-control">
+                        <label for="volume">Громкость:</label>
+                        <input type="range" id="volume" min="0" max="100" value="70">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h2>Элементы бита</h2>
+                    <label for="kick">Kick (бочка)</label>
+                    <input type="range" id="kick" min="0" max="10" value="7">
+                    
+                    <label for="snare">Snare (рабочий)</label>
+                    <input type="range" id="snare" min="0" max="10" value="5">
+                    
+                    <label for="hihat">Hi-Hat (тарелки)</label>
+                    <input type="range" id="hihat" min="0" max="10" value="8">
+                    
+                    <label for="melody">Мелодия</label>
+                    <input type="range" id="melody" min="0" max="10" value="6">
+                    
+                    <label for="bass">Бас</label>
+                    <input type="range" id="bass" min="0" max="10" value="6">
+                </div>
+                
+                <button id="generate-btn">Сгенерировать бит</button>
+                <button id="save-btn">Сохранить бит</button>
+            </div>
+            
+            <div class="preview">
+                <h2>Превью</h2>
+                <div class="visualizer" id="visualizer">
+                    <!-- Визуализатор будет создан через JS -->
+                </div>
+                
+                <div class="beat-info">
+                    <div class="beat-name" id="beat-name">Не сгенерировано</div>
+                    <div class="bpm-display" id="bpm-display">BPM: -</div>
+                    <div class="genre-tag" id="genre-tag">-</div>
+                </div>
+                
+                <div class="player-controls">
+                    <button id="play-btn">▶ Воспроизвести</button>
+                    <button id="pause-btn">⏸ Пауза</button>
+                    <button id="stop-btn">⏹ Стоп</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="saved-beats">
+            <h2>Сохранённые биты</h2>
+            <div class="beats-grid" id="saved-beats-container">
+                <!-- Сохранённые биты будут отображаться здесь -->
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 BeatMaker - Генератор битов. Все биты создаются алгоритмически.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Элементы DOM
+            const genreSelect = document.getElementById('genre');
+            const bpmSlider = document.getElementById('bpm');
+            const bpmValue = document.getElementById('bpm-value');
+            const intensitySlider = document.getElementById('intensity');
+            const intensityValue = document.getElementById('intensity-value');
+            const volumeSlider = document.getElementById('volume');
+            const generateBtn = document.getElementById('generate-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const playBtn = document.getElementById('play-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const beatName = document.getElementById('beat-name');
+            const bpmDisplay = document.getElementById('bpm-display');
+            const genreTag = document.getElementById('genre-tag');
+            const visualizer = document.getElementById('visualizer');
+            const savedBeatsContainer = document.getElementById('saved-beats-container');
+            
+            // Переменные состояния
+            let currentBeat = null;
+            let isPlaying = false;
+            let audioContext = null;
+            let visualizerBars = [];
+            let scheduler = null;
+            let nextNoteTime = 0;
+            let currentStep = 0;
+            let notesInQueue = [];
+            let timerID = null;
+            let gainNode = null;
+            
+            // Инициализация визуализатора
+            function initVisualizer() {
+                visualizer.innerHTML = '';
+                visualizerBars = [];
+                
+                for (let i = 0; i < 32; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'visualizer-bar';
+                    bar.style.left = `${i * (100 / 32)}%`;
+                    bar.style.width = `${(100 / 32) - 1}%`;
+                    bar.style.height = '0%';
+                    visualizer.appendChild(bar);
+                    visualizerBars.push(bar);
+                }
+            }
+            
+            // Обновление визуализатора
+            function updateVisualizer(step) {
+                if (!visualizerBars.length) return;
+                
+                // Сброс всех столбцов
+                visualizerBars.forEach(bar => {
+                    bar.style.height = '0%';
+                });
+                
+                // Установка высоты для текущего шага
+                const intensity = parseInt(intensitySlider.value);
+                const height = 20 + (intensity * 8);
+                visualizerBars[step % 32].style.height = `${height}%`;
+            }
+            
+            // Обновление отображения значений слайдеров
+            bpmSlider.addEventListener('input', function() {
+                bpmValue.textContent = `${this.value} BPM`;
+            });
+            
+            intensitySlider.addEventListener('input', function() {
+                intensityValue.textContent = `${this.value}/10`;
+            });
+            
+            // Генерация имени для бита
+            function generateBeatName(genre) {
+                const prefixes = {
+                    hiphop: ['Street ', 'Urban ', 'Hip-Hop ', 'Flow ', 'Rhyme '],
+                    trap: ['Trap ', 'Dark ', 'Wave ', 'Vibe ', 'Drip '],
+                    russianrap: ['Восточный ', 'Барбара ', 'Славянский ', 'Московский ', 'Сибирский '],
+                    drill: ['Drill ', 'Chicago ', 'UK ', 'Bronx ', 'Grime '],
+                    electronic: ['Digital ', 'Neon ', 'Synth ', 'Electric ', 'Future '],
+                    random: ['Random ', 'Mystery ', 'Unknown ', 'Experimental ', 'Mixed ']
+                };
+                
+                const suffixes = {
+                    hiphop: ['Beats', 'Vibes', 'Groove', 'Session', 'Sounds'],
+                    trap: ['Type Beat', 'Dreams', 'Money', 'Fire', 'Dope'],
+                    russianrap: ['Бит', 'Рэпчик', 'Речитатив', 'Бар', 'Флоу'],
+                    drill: ['Drill', 'Beats', 'Violence', 'Street', 'Gang'],
+                    electronic: ['Pulse', 'Wave', 'Beats', 'Rhythm', 'Frequency'],
+                    random: ['Beats', 'Mix', 'Session', 'Vibes', 'Sounds']
+                };
+                
+                const genreKey = genre in prefixes ? genre : 'random';
+                const prefix = prefixes[genreKey][Math.floor(Math.random() * prefixes[genreKey].length)];
+                const suffix = suffixes[genreKey][Math.floor(Math.random() * suffixes[genreKey].length)];
+                
+                return prefix + suffix;
+            }
+            
+            // Генерация бита
+            generateBtn.addEventListener('click', function() {
+                const genre = genreSelect.value;
+                const bpm = parseInt(bpmSlider.value);
+                const intensity = parseInt(intensitySlider.value);
+                
+                // Генерация имени
+                const name = generateBeatName(genre);
+                beatName.textContent = name;
+                bpmDisplay.textContent = `BPM: ${bpm}`;
+                genreTag.textContent = genreSelect.options[genreSelect.selectedIndex].text;
+                
+                // Создание объекта бита
+                currentBeat = {
+                    name,
+                    genre,
+                    bpm,
+                    intensity,
+                    kick: parseInt(document.getElementById('kick').value),
+                    snare: parseInt(document.getElementById('snare').value),
+                    hihat: parseInt(document.getElementById('hihat').value),
+                    melody: parseInt(document.getElementById('melody').value),
+                    bass: parseInt(document.getElementById('bass').value),
+                    id: Date.now() // Уникальный ID на основе времени
+                };
+                
+                // Инициализация визуализатора
+                initVisualizer();
+                
+                // Остановка воспроизведения, если оно идёт
+                if (isPlaying) {
+                    stopPlayback();
+                }
+                
+                // Инициализация AudioContext при первом использовании
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    gainNode = audioContext.createGain();
+                    gainNode.connect(audioContext.destination);
+                    updateVolume();
+                }
+            });
+            
+            // Обновление громкости
+            volumeSlider.addEventListener('input', updateVolume);
+            
+            function updateVolume() {
+                if (gainNode) {
+                    const volume = parseInt(volumeSlider.value) / 100;
+                    gainNode.gain.value = volume * volume; // Квадратичная кривая для более естественного восприятия
+                }
+            }
+            
+            // Воспроизведение бита
+            playBtn.addEventListener('click', function() {
+                if (!currentBeat) {
+                    alert('Сначала сгенерируйте бит!');
+                    return;
+                }
+                
+                if (isPlaying) {
+                    return;
+                }
+                
+                isPlaying = true;
+                startPlayback();
+            });
+            
+            // Пауза
+            pauseBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    isPlaying = false;
+                    clearTimeout(timerID);
+                }
+            });
+            
+            // Стоп
+            stopBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    stopPlayback();
+                }
+            });
+            
+            // Функции для работы с аудио
+            function startPlayback() {
+                if (!currentBeat || !audioContext) return;
+                
+                // Сброс состояния
+                currentStep = 0;
+                nextNoteTime = audioContext.currentTime;
+                notesInQueue = [];
+                
+                // Запуск планировщика
+                scheduler = audioContext.currentTime;
+                schedule();
+                
+                isPlaying = true;
+            }
+            
+            function schedule() {
+                while (nextNoteTime < audioContext.currentTime + 0.1) {
+                    playStep(currentStep);
+                    nextNote();
+                }
+                
+                timerID = window.setTimeout(schedule, 25);
+            }
+            
+            function nextNote() {
+                // Длительность одной шестнадцатой ноты
+                const secondsPerBeat = 60.0 / currentBeat.bpm;
+                nextNoteTime += 0.25 * secondsPerBeat;
+                
+                // Переход к следующему шагу
+                currentStep++;
+                if (currentStep === 16) {
+                    currentStep = 0;
+                }
+            }
+            
+            function playStep(step) {
+                // Обновляем визуализатор
+                updateVisualizer(step);
+                
+                // Генерируем звуки в зависимости от настроек
+                const kickIntensity = currentBeat.kick / 10;
+                const snareIntensity = currentBeat.snare / 10;
+                const hihatIntensity = currentBeat.hihat / 10;
+                const bassIntensity = currentBeat.bass / 10;
+                
+                // Бочка на 1, 5, 9, 13 шагах
+                if ([0, 4, 8, 12].includes(step % 16) && Math.random() < kickIntensity) {
+                    playKick(nextNoteTime);
+                }
+                
+                // Рабочий на 5, 13 шагах
+                if ([4, 12].includes(step % 16) && Math.random() < snareIntensity) {
+                    playSnare(nextNoteTime);
+                }
+                
+                // Случайные хай-хэты
+                if (Math.random() < hihatIntensity * 0.7) {
+                    playHiHat(nextNoteTime);
+                }
+                
+                // Бас на каждом шаге с меньшей вероятностью
+                if (Math.random() < bassIntensity * 0.5) {
+                    playBass(nextNoteTime, step);
+                }
+            }
+            
+            function playKick(time) {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(150, time);
+                oscillator.frequency.exponentialRampToValueAtTime(0.001, time + 0.5);
+                
+                gain.gain.setValueAtTime(1, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+                
+                oscillator.connect(gain);
+                gain.connect(gainNode);
+                
+                oscillator.start(time);
+                oscillator.stop(time + 0.5);
+            }
+            
+            function playSnare(time) {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                // Шумовая составляющая
+                const noise = audioContext.createOscillator();
+                noise.type = 'square';
+                noise.frequency.setValueAtTime(100 + Math.random() * 500, time);
+                
+                // Основной тон
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(150 + Math.random() * 50, time);
+                
+                gain.gain.setValueAtTime(0.7, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
+                
+                oscillator.connect(gain);
+                noise.connect(gain);
+                gain.connect(gainNode);
+                
+                oscillator.start(time);
+                noise.start(time);
+                oscillator.stop(time + 0.3);
+                noise.stop(time + 0.3);
+            }
+            
+            function playHiHat(time) {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(500 + Math.random() * 1000, time);
+                
+                gain.gain.setValueAtTime(0.3, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+                
+                oscillator.connect(gain);
+                gain.connect(gainNode);
+                
+                oscillator.start(time);
+                oscillator.stop(time + 0.1);
+            }
+            
+            function playBass(time, step) {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                // Простая бас-линия в зависимости от шага
+                const notes = [55, 57, 58, 60, 62, 63, 65, 67];
+                const note = notes[step % notes.length];
+                
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(note, time);
+                
+                gain.gain.setValueAtTime(0.4, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+                
+                oscillator.connect(gain);
+                gain.connect(gainNode);
+                
+                oscillator.start(time);
+                oscillator.stop(time + 0.4);
+            }
+            
+            function stopPlayback() {
+                isPlaying = false;
+                clearTimeout(timerID);
+                
+                // Сброс визуализатора
+                visualizerBars.forEach(bar => {
+                    bar.style.height = '0%';
+                });
+            }
+            
+            // Сохранение бита
+            saveBtn.addEventListener('click', function() {
+                if (!currentBeat) {
+                    alert('Сначала сгенерируйте бит!');
+                    return;
+                }
+                
+                // Сохраняем в localStorage
+                let savedBeats = JSON.parse(localStorage.getItem('savedBeats') || '[]');
+                savedBeats.push(currentBeat);
+                localStorage.setItem('savedBeats', JSON.stringify(savedBeats));
+                
+                // Обновляем отображение сохранённых битов
+                displaySavedBeats();
+                
+                alert(`Бит "${currentBeat.name}" сохранён!`);
+            });
+            
+            // Отображение сохранённых битов
+            function displaySavedBeats() {
+                const savedBeats = JSON.parse(localStorage.getItem('savedBeats') || '[]');
+                savedBeatsContainer.innerHTML = '';
+                
+                if (savedBeats.length === 0) {
+                    savedBeatsContainer.innerHTML = '<p>У вас пока нет сохранённых битов.</p>';
+                    return;
+                }
+                
+                savedBeats.forEach(beat => {
+                    const beatCard = document.createElement('div');
+                    beatCard.className = 'beat-card';
+                    
+                    beatCard.innerHTML = `
+                        <h3>${beat.name}</h3>
+                        <p>Жанр: ${beat.genre}</p>
+                        <p>BPM: ${beat.bpm}</p>
+                        <p>Интенсивность: ${beat.intensity}/10</p>
+                        <button class="load-btn" data-id="${beat.id}">Загрузить</button>
+                        <button class="delete-btn" data-id="${beat.id}">Удалить</button>
+                    `;
+                    
+                    savedBeatsContainer.appendChild(beatCard);
+                });
+                
+                // Добавляем обработчики для кнопок загрузки и удаления
+                document.querySelectorAll('.load-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        loadBeat(id);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteBeat(id);
+                    });
+                });
+            }
+            
+            // Загрузка бита
+            function loadBeat(id) {
+                const savedBeats = JSON.parse(localStorage.getItem('savedBeats') || '[]');
+                const beat = savedBeats.find(b => b.id === id);
+                
+                if (beat) {
+                    currentBeat = beat;
+                    
+                    // Устанавливаем значения в интерфейсе
+                    genreSelect.value = beat.genre;
+                    bpmSlider.value = beat.bpm;
+                    bpmValue.textContent = `${beat.bpm} BPM`;
+                    intensitySlider.value = beat.intensity;
+                    intensityValue.textContent = `${beat.intensity}/10`;
+                    document.getElementById('kick').value = beat.kick;
+                    document.getElementById('snare').value = beat.snare;
+                    document.getElementById('hihat').value = beat.hihat;
+                    document.getElementById('melody').value = beat.melody;
+                    document.getElementById('bass').value = beat.bass;
+                    
+                    // Обновляем отображение
+                    beatName.textContent = beat.name;
+                    bpmDisplay.textContent = `BPM: ${beat.bpm}`;
+                    genreTag.textContent = genreSelect.options[genreSelect.selectedIndex].text;
+                    
+                    // Инициализируем визуализатор
+                    initVisualizer();
+                    
+                    alert(`Бит "${beat.name}" загружен!`);
+                }
+            }
+            
+            // Удаление бита
+            function deleteBeat(id) {
+                let savedBeats = JSON.parse(localStorage.getItem('savedBeats') || '[]');
+                const beatIndex = savedBeats.findIndex(b => b.id === id);
+                
+                if (beatIndex !== -1) {
+                    const beatName = savedBeats[beatIndex].name;
+                    savedBeats.splice(beatIndex, 1);
+                    localStorage.setItem('savedBeats', JSON.stringify(savedBeats));
+                    
+                    displaySavedBeats();
+                    alert(`Бит "${beatName}" удалён!`);
+                }
+            }
+            
+            // Инициализация при загрузке
+            initVisualizer();
+            displaySavedBeats();
+        });
+    </script>
+</body>
+</html>
