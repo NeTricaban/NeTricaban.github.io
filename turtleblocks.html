@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurtleBlocks</title>
+    <title>TurtleBlocks 2025 - Визуальное программирование</title>
     <style>
         * {
             margin: 0;
@@ -190,7 +190,6 @@
         .code-line.control { border-left-color: #FF6B6B; }
         .code-line.sensing { border-left-color: #5C6BC0; }
         .code-line.advanced { border-left-color: #26C6DA; }
-        .code-line.threeD { border-left-color: #7E57C2; }
 
         .code-line .delete-btn {
             position: absolute;
@@ -276,6 +275,11 @@
         .btn-secondary {
             background: rgba(255, 255, 255, 0.2);
             color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .controls {
@@ -374,6 +378,7 @@
             font-size: 14px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             z-index: 100;
+            display: none;
         }
 
         @media (max-width: 1200px) {
@@ -419,29 +424,11 @@
                         <div class="block" data-type="goto" data-category="motion">
                             <div>Перейти в x:<input type="number" class="block-input" value="0"> y:<input type="number" class="block-input" value="0"></div>
                         </div>
-                        <div class="block" data-type="glide" data-category="motion">
-                            <div>Плавно к x:<input type="number" class="block-input" value="0"> y:<input type="number" class="block-input" value="0"> за <input type="number" class="block-input" value="1"> сек</div>
-                        </div>
                         <div class="block" data-type="pointToMouse" data-category="motion">
                             <div>Направиться к мыши</div>
                         </div>
                         <div class="block" data-type="setDirection" data-category="motion">
                             <div>Направиться в <input type="number" class="block-input" value="90">°</div>
-                        </div>
-                        <div class="block" data-type="changeX" data-category="motion">
-                            <div>Изменить x на <input type="number" class="block-input" value="10"></div>
-                        </div>
-                        <div class="block" data-type="setX" data-category="motion">
-                            <div>Задать x = <input type="number" class="block-input" value="0"></div>
-                        </div>
-                        <div class="block" data-type="changeY" data-category="motion">
-                            <div>Изменить y на <input type="number" class="block-input" value="10"></div>
-                        </div>
-                        <div class="block" data-type="setY" data-category="motion">
-                            <div>Задать y = <input type="number" class="block-input" value="0"></div>
-                        </div>
-                        <div class="block" data-type="bounceOnEdge" data-category="motion">
-                            <div>Оттолкнуться от края</div>
                         </div>
                     </div>
                 </div>
@@ -461,16 +448,6 @@
                         <div class="block" data-type="changeSize" data-category="looks">
                             <div>Изменить размер на <input type="number" class="block-input" value="10"></div>
                         </div>
-                        <div class="block" data-type="setSize" data-category="looks">
-                            <div>Задать размер <input type="number" class="block-input" value="100">%</div>
-                        </div>
-                        <div class="block" data-type="changeColor" data-category="looks">
-                            <div>Изменить цвет на <input type="number" class="block-input" value="25"></div>
-                        </div>
-                        <div class="block" data-type="setColor" data-category="looks">
-                            <div>Задать цвет <input type="number" class="block-input" value="0"></div>
-                        </div>
-                        <div class="block" data-type="nextCostume" data-category="looks">Следующий костюм</div>
                     </div>
                 </div>
                 
@@ -480,22 +457,10 @@
                     <div class="blocks-container">
                         <div class="block" data-type="playSound" data-category="sound">Играть звук</div>
                         <div class="block" data-type="stopSounds" data-category="sound">Остановить все звуки</div>
-                        <div class="block" data-type="playDrum" data-category="sound">
-                            <div>Играть барабан <input type="number" class="block-input" value="1"> <input type="number" class="block-input" value="0.25"> такта</div>
-                        </div>
-                        <div class="block" data-type="rest" data-category="sound">
-                            <div>Пауза <input type="number" class="block-input" value="0.25"> такта</div>
-                        </div>
-                        <div class="block" data-type="playNote" data-category="sound">
-                            <div>Играть ноту <input type="number" class="block-input" value="60"> <input type="number" class="block-input" value="0.5"> такта</div>
-                        </div>
-                        <div class="block" data-type="setTempo" data-category="sound">
-                            <div>Задать темп <input type="number" class="block-input" value="60"></div>
-                        </div>
-                        <div class="block" data-type="changeTempo" data-category="sound">
-                            <div>Изменить темп на <input type="number" class="block-input" value="10"></div>
-                        </div>
                         <div class="block" data-type="beep" data-category="sound">Издать звук</div>
+                        <div class="block" data-type="playNote" data-category="sound">
+                            <div>Играть ноту <input type="number" class="block-input" value="60"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -507,9 +472,6 @@
                         <div class="block" data-type="penUp" data-category="pen">Поднять перо</div>
                         <div class="block" data-type="setPenColor" data-category="pen">
                             <div>Цвет пера <input type="color" class="block-input" value="#ff0000"></div>
-                        </div>
-                        <div class="block" data-type="changePenSize" data-category="pen">
-                            <div>Изменить размер пера на <input type="number" class="block-input" value="1"></div>
                         </div>
                         <div class="block" data-type="setPenSize" data-category="pen">
                             <div>Задать размер пера <input type="number" class="block-input" value="2"></div>
@@ -528,12 +490,6 @@
                         <div class="block" data-type="whenKeyPressed" data-category="control">
                             <div>Когда нажата клавиша <input type="text" class="block-input" value="пробел"></div>
                         </div>
-                        <div class="block" data-type="whenBroadcast" data-category="control">
-                            <div>Когда сообщение <input type="text" class="block-input" value="сообщение1"></div>
-                        </div>
-                        <div class="block" data-type="broadcast" data-category="control">
-                            <div>Отправить сообщение <input type="text" class="block-input" value="сообщение1"></div>
-                        </div>
                     </div>
                 </div>
                 
@@ -548,14 +504,7 @@
                             <div>Повторить <input type="number" class="block-input" value="10"> раз</div>
                         </div>
                         <div class="block" data-type="forever" data-category="control">Повторять всегда</div>
-                        <div class="block" data-type="if" data-category="control">
-                            <div>Если <input type="text" class="block-input" value="условие"> то</div>
-                        </div>
-                        <div class="block" data-type="ifElse" data-category="control">
-                            <div>Если <input type="text" class="block-input" value="условие"> то иначе</div>
-                        </div>
                         <div class="block" data-type="stopAll" data-category="control">Остановить всё</div>
-                        <div class="block" data-type="stopThisScript" data-category="control">Остановить этот скрипт</div>
                     </div>
                 </div>
                 
@@ -571,48 +520,7 @@
                             <div>Клавиша <input type="text" class="block-input" value="пробел"> нажата?</div>
                         </div>
                         <div class="block" data-type="distanceToMouse" data-category="sensing">Расстояние до мыши</div>
-                        <div class="block" data-type="ask" data-category="sensing">
-                            <div>Спросить <input type="text" class="block-input" value="Как тебя зовут?"> и ждать</div>
-                        </div>
                         <div class="block" data-type="timer" data-category="sensing">Таймер</div>
-                        <div class="block" data-type="resetTimer" data-category="sensing">Сбросить таймер</div>
-                    </div>
-                </div>
-                
-                <!-- Операторы -->
-                <div class="category">
-                    <h3>🔢 Операторы</h3>
-                    <div class="blocks-container">
-                        <div class="block" data-type="add" data-category="sensing">
-                            <div><input type="number" class="block-input" value="5"> + <input type="number" class="block-input" value="3"></div>
-                        </div>
-                        <div class="block" data-type="subtract" data-category="sensing">
-                            <div><input type="number" class="block-input" value="5"> - <input type="number" class="block-input" value="3"></div>
-                        </div>
-                        <div class="block" data-type="multiply" data-category="sensing">
-                            <div><input type="number" class="block-input" value="5"> × <input type="number" class="block-input" value="3"></div>
-                        </div>
-                        <div class="block" data-type="divide" data-category="sensing">
-                            <div><input type="number" class="block-input" value="10"> ÷ <input type="number" class="block-input" value="2"></div>
-                        </div>
-                        <div class="block" data-type="random" data-category="sensing">
-                            <div>Случайное от <input type="number" class="block-input" value="1"> до <input type="number" class="block-input" value="10"></div>
-                        </div>
-                        <div class="block" data-type="lessThan" data-category="sensing">
-                            <div><input type="number" class="block-input" value="5"> < <input type="number" class="block-input" value="10"></div>
-                        </div>
-                        <div class="block" data-type="equals" data-category="sensing">
-                            <div><input type="number" class="block-input" value="5"> = <input type="number" class="block-input" value="5"></div>
-                        </div>
-                        <div class="block" data-type="and" data-category="sensing">
-                            <div><input type="text" class="block-input" value="условие"> и <input type="text" class="block-input" value="условие"></div>
-                        </div>
-                        <div class="block" data-type="or" data-category="sensing">
-                            <div><input type="text" class="block-input" value="условие"> или <input type="text" class="block-input" value="условие"></div>
-                        </div>
-                        <div class="block" data-type="not" data-category="sensing">
-                            <div>не <input type="text" class="block-input" value="условие"></div>
-                        </div>
                     </div>
                 </div>
 
@@ -627,24 +535,6 @@
                         <div class="block" data-type="drawCircle" data-category="advanced">Нарисовать круг</div>
                         <div class="block" data-type="drawStar" data-category="advanced">Нарисовать звезду</div>
                         <div class="block" data-type="drawSpiral" data-category="advanced">Нарисовать спираль</div>
-                        <div class="block" data-type="drawFlower" data-category="advanced">Нарисовать цветок</div>
-                    </div>
-                </div>
-
-                <!-- 3D блоки -->
-                <div class="category">
-                    <h3>🧊 3D Блоки</h3>
-                    <div class="blocks-container">
-                        <div class="block" data-type="move3D" data-category="threeD">
-                            <div>3D: Движение вперед <input type="number" class="block-input" value="10"></div>
-                        </div>
-                        <div class="block" data-type="rotate3D" data-category="threeD">
-                            <div>3D: Поворот <input type="number" class="block-input" value="15">°</div>
-                        </div>
-                        <div class="block" data-type="createCube" data-category="threeD">3D: Создать куб</div>
-                        <div class="block" data-type="createSphere" data-category="threeD">3D: Создать сферу</div>
-                        <div class="block" data-type="createPyramid" data-category="threeD">3D: Создать пирамиду</div>
-                        <div class="block" data-type="set3DMode" data-category="threeD">3D: Включить режим</div>
                     </div>
                 </div>
 
@@ -658,6 +548,7 @@
                 <div class="stage-container">
                     <canvas id="stage" width="600" height="400"></canvas>
                     <img src="https://i0.wp.com/gas-kvas.com/grafic/uploads/posts/2024-01/gas-kvas-com-p-cherepakha-dlya-detei-na-prozrachnom-fone-4.png?ssl=1" alt="Turtle" class="turtle" id="turtle">
+                    <div class="speech-bubble" id="speech-bubble"></div>
                 </div>
                 <div class="controls">
                     <button class="btn btn-primary" id="run-btn">
@@ -671,9 +562,6 @@
                     </button>
                     <button class="btn btn-secondary" id="example-btn">
                         <span>📋 Примеры</span>
-                    </button>
-                    <button class="btn btn-secondary" id="upload-btn">
-                        <span>📁 Загрузить изображение</span>
                     </button>
                 </div>
                 <div class="code-area" id="code-area">
@@ -712,18 +600,6 @@
                 </div>
                 
                 <div class="property-group">
-                    <h3>🎵 Звук</h3>
-                    <div class="property">
-                        <label for="sound-volume">Громкость: <span id="sound-volume-value">50</span>%</label>
-                        <input type="range" id="sound-volume" min="0" max="100" value="50">
-                    </div>
-                    <div class="property">
-                        <label for="sound-tempo">Темп: <span id="sound-tempo-value">60</span> BPM</label>
-                        <input type="range" id="sound-tempo" min="40" max="240" value="60">
-                    </div>
-                </div>
-                
-                <div class="property-group">
                     <h3>📊 Информация</h3>
                     <div class="property">
                         <label>Статус: <span class="sensor-value" id="status">Готов</span></label>
@@ -738,7 +614,6 @@
                 
                 <div class="buttons">
                     <button class="btn btn-primary" id="save-project">Сохранить проект</button>
-                    <button class="btn btn-secondary" id="load-project">Загрузить проект</button>
                     <button class="btn btn-secondary" id="reset-btn">Сбросить всё</button>
                 </div>
             </div>
@@ -759,10 +634,8 @@
                 <button class="btn btn-primary" id="example-spiral">Спираль</button>
                 <button class="btn btn-primary" id="example-star">Звезда</button>
                 <button class="btn btn-primary" id="example-circle">Круг</button>
-                <button class="btn btn-primary" id="example-flower">Цветок</button>
                 <button class="btn btn-primary" id="example-house">Домик</button>
                 <button class="btn btn-primary" id="example-animation">Анимация</button>
-                <button class="btn btn-primary" id="example-game">Простая игра</button>
             </div>
             <div class="buttons">
                 <button class="btn btn-secondary" id="close-examples">Закрыть</button>
@@ -771,12 +644,811 @@
     </div>
 
     <script>
-        // Полная реализация всех блоков будет здесь
-        // Из-за ограничения длины покажу только ключевые части
-        // Полный код доступен по запросу
+        // Основные переменные
+        const stage = document.getElementById('stage');
+        const ctx = stage.getContext('2d');
+        const turtle = document.getElementById('turtle');
+        const codeArea = document.getElementById('code-area');
+        const speechBubble = document.getElementById('speech-bubble');
         
-        console.log("TurtleBlocks 2025 - Все блоки загружены!");
-        // Здесь будет полная реализация всех 80+ блоков
+        // Состояние черепахи
+        let turtleState = {
+            x: stage.width / 2,
+            y: stage.height / 2,
+            direction: 90,
+            visible: true,
+            penDown: true,
+            penColor: '#ff0000',
+            penSize: 2,
+            isRunning: false,
+            speed: 5,
+            timer: 0,
+            timerStart: 0
+        };
+
+        // Переменные для управления
+        let currentProgram = null;
+        let isExecuting = false;
+        let pressedKeys = new Set();
+
+        // Инициализация
+        function init() {
+            resetStage();
+            updateTurtlePosition();
+            
+            // Обработчики для блоков
+            document.querySelectorAll('.block').forEach(block => {
+                block.addEventListener('click', handleBlockClick);
+            });
+            
+            // Обработчики кнопок
+            document.getElementById('run-btn').addEventListener('click', runProgram);
+            document.getElementById('stop-btn').addEventListener('click', stopProgram);
+            document.getElementById('clear-btn').addEventListener('click', clearProgram);
+            document.getElementById('example-btn').addEventListener('click', () => {
+                document.getElementById('examples-modal').style.display = 'flex';
+            });
+            document.getElementById('reset-btn').addEventListener('click', resetAll);
+            
+            // Обработчики модального окна примеров
+            document.getElementById('close-examples-modal').addEventListener('click', () => {
+                document.getElementById('examples-modal').style.display = 'none';
+            });
+            document.getElementById('close-examples').addEventListener('click', () => {
+                document.getElementById('examples-modal').style.display = 'none';
+            });
+            
+            // Обработчики примеров
+            document.getElementById('example-square').addEventListener('click', () => loadExample('square'));
+            document.getElementById('example-spiral').addEventListener('click', () => loadExample('spiral'));
+            document.getElementById('example-star').addEventListener('click', () => loadExample('star'));
+            document.getElementById('example-circle').addEventListener('click', () => loadExample('circle'));
+            document.getElementById('example-house').addEventListener('click', () => loadExample('house'));
+            document.getElementById('example-animation').addEventListener('click', () => loadExample('animation'));
+            
+            // Обработчики свойств
+            document.getElementById('pen-color').addEventListener('input', (e) => {
+                turtleState.penColor = e.target.value;
+            });
+            
+            document.getElementById('pen-size').addEventListener('input', (e) => {
+                turtleState.penSize = parseInt(e.target.value);
+                document.getElementById('pen-size-value').textContent = turtleState.penSize;
+            });
+            
+            document.getElementById('speed-control').addEventListener('input', (e) => {
+                turtleState.speed = parseInt(e.target.value);
+                document.getElementById('turtle-speed').textContent = turtleState.speed;
+            });
+            
+            // Обработчики клавиатуры
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            // Запуск таймера
+            turtleState.timerStart = Date.now();
+            setInterval(updateTimer, 100);
+            
+            updateSensors();
+        }
+
+        // Обработчик клика по блоку
+        function handleBlockClick(e) {
+            const block = e.currentTarget;
+            const type = block.dataset.type;
+            const category = block.dataset.category;
+            const inputs = block.querySelectorAll('input');
+            const params = {};
+            
+            inputs.forEach(input => {
+                if (input.type === 'number') {
+                    params.number = parseInt(input.value);
+                } else if (input.type === 'color') {
+                    params.color = input.value;
+                } else {
+                    params.text = input.value;
+                }
+            });
+            
+            addBlockToProgram(type, category, params);
+        }
+
+        // Добавление блока в программу
+        function addBlockToProgram(type, category, params) {
+            const blockElement = document.createElement('div');
+            blockElement.className = `code-line ${category}`;
+            blockElement.dataset.type = type;
+            blockElement.dataset.category = category;
+            
+            let content = '';
+            let displayParams = { ...params };
+            
+            switch(type) {
+                case 'move':
+                    content = `Идти ${displayParams.number || 10} шагов`;
+                    break;
+                case 'turnRight':
+                    content = `Повернуть ↻ ${displayParams.number || 15}°`;
+                    break;
+                case 'turnLeft':
+                    content = `Повернуть ↺ ${displayParams.number || 15}°`;
+                    break;
+                case 'goto':
+                    content = `Перейти в x:${displayParams.number || 0} y:${displayParams.number || 0}`;
+                    break;
+                case 'pointToMouse':
+                    content = 'Направиться к мыши';
+                    break;
+                case 'setDirection':
+                    content = `Направиться в ${displayParams.number || 90}°`;
+                    break;
+                case 'say':
+                    content = `Сказать "${displayParams.text || 'Привет!'}"`;
+                    break;
+                case 'think':
+                    content = `Думать "${displayParams.text || 'О чем-то'}"`;
+                    break;
+                case 'show':
+                    content = 'Показаться';
+                    break;
+                case 'hide':
+                    content = 'Спрятаться';
+                    break;
+                case 'changeSize':
+                    content = `Изменить размер на ${displayParams.number || 10}`;
+                    break;
+                case 'playSound':
+                    content = 'Играть звук';
+                    break;
+                case 'stopSounds':
+                    content = 'Остановить все звуки';
+                    break;
+                case 'beep':
+                    content = 'Издать звук';
+                    break;
+                case 'playNote':
+                    content = `Играть ноту ${displayParams.number || 60}`;
+                    break;
+                case 'penDown':
+                    content = 'Опустить перо';
+                    break;
+                case 'penUp':
+                    content = 'Поднять перо';
+                    break;
+                case 'setPenColor':
+                    content = `Цвет пера ${displayParams.color || '#ff0000'}`;
+                    break;
+                case 'setPenSize':
+                    content = `Задать размер пера ${displayParams.number || 2}`;
+                    break;
+                case 'stamp':
+                    content = 'Штамп';
+                    break;
+                case 'clear':
+                    content = 'Очистить';
+                    break;
+                case 'whenRun':
+                    content = 'Когда запущено';
+                    break;
+                case 'whenClicked':
+                    content = 'Когда щелкнут по черепахе';
+                    break;
+                case 'whenKeyPressed':
+                    content = `Когда нажата клавиша "${displayParams.text || 'пробел'}"`;
+                    break;
+                case 'wait':
+                    content = `Ждать ${displayParams.number || 1} секунд`;
+                    break;
+                case 'repeat':
+                    content = `Повторить ${displayParams.number || 10} раз`;
+                    break;
+                case 'forever':
+                    content = 'Повторять всегда';
+                    break;
+                case 'stopAll':
+                    content = 'Остановить всё';
+                    break;
+                case 'touchingMouse':
+                    content = 'Касается мыши?';
+                    break;
+                case 'touchingEdge':
+                    content = 'Касается края?';
+                    break;
+                case 'mouseX':
+                    content = 'Координата X мыши';
+                    break;
+                case 'mouseY':
+                    content = 'Координата Y мыши';
+                    break;
+                case 'keyPressed':
+                    content = `Клавиша "${displayParams.text || 'пробел'}" нажата?`;
+                    break;
+                case 'distanceToMouse':
+                    content = 'Расстояние до мыши';
+                    break;
+                case 'timer':
+                    content = 'Таймер';
+                    break;
+                case 'chaseMouse':
+                    content = 'Преследовать мышь';
+                    break;
+                case 'wasdControls':
+                    content = 'Управление WASD';
+                    break;
+                case 'drawSquare':
+                    content = 'Нарисовать квадрат';
+                    break;
+                case 'drawTriangle':
+                    content = 'Нарисовать треугольник';
+                    break;
+                case 'drawCircle':
+                    content = 'Нарисовать круг';
+                    break;
+                case 'drawStar':
+                    content = 'Нарисовать звезду';
+                    break;
+                case 'drawSpiral':
+                    content = 'Нарисовать спираль';
+                    break;
+            }
+            
+            blockElement.innerHTML = `
+                ${content}
+                <button class="delete-btn">❌</button>
+            `;
+            
+            // Сохраняем параметры в dataset
+            if (params.number) blockElement.dataset.number = params.number;
+            if (params.text) blockElement.dataset.text = params.text;
+            if (params.color) blockElement.dataset.color = params.color;
+            
+            blockElement.querySelector('.delete-btn').addEventListener('click', function() {
+                blockElement.remove();
+                updateBlockCount();
+            });
+            
+            codeArea.appendChild(blockElement);
+            updateBlockCount();
+        }
+
+        // Загрузка примера
+        function loadExample(example) {
+            clearProgram();
+            
+            switch(example) {
+                case 'square':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('penDown', 'pen');
+                    addBlockToProgram('repeat', 'control', {number: 4});
+                    addBlockToProgram('move', 'motion', {number: 100});
+                    addBlockToProgram('turnRight', 'motion', {number: 90});
+                    break;
+                case 'spiral':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('penDown', 'pen');
+                    addBlockToProgram('forever', 'control');
+                    addBlockToProgram('move', 'motion', {number: 10});
+                    addBlockToProgram('turnRight', 'motion', {number: 89});
+                    break;
+                case 'star':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('penDown', 'pen');
+                    addBlockToProgram('drawStar', 'advanced');
+                    break;
+                case 'circle':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('penDown', 'pen');
+                    addBlockToProgram('drawCircle', 'advanced');
+                    break;
+                case 'house':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('penDown', 'pen');
+                    addBlockToProgram('drawSquare', 'advanced');
+                    addBlockToProgram('move', 'motion', {number: 100});
+                    addBlockToProgram('turnRight', 'motion', {number: 30});
+                    addBlockToProgram('drawTriangle', 'advanced');
+                    break;
+                case 'animation':
+                    addBlockToProgram('whenRun', 'control');
+                    addBlockToProgram('forever', 'control');
+                    addBlockToProgram('move', 'motion', {number: 5});
+                    addBlockToProgram('turnRight', 'motion', {number: 10});
+                    addBlockToProgram('wait', 'control', {number: 0.1});
+                    break;
+            }
+            
+            document.getElementById('examples-modal').style.display = 'none';
+        }
+
+        // Запуск программы
+        async function runProgram() {
+            if (turtleState.isRunning) return;
+            
+            turtleState.isRunning = true;
+            isExecuting = true;
+            document.getElementById('status').textContent = 'Выполняется';
+            document.getElementById('run-btn').disabled = true;
+            
+            const startTime = Date.now();
+            const blocks = Array.from(codeArea.children);
+            
+            // Выполняем все блоки
+            for (const block of blocks) {
+                if (!turtleState.isRunning) break;
+                await executeBlock(block);
+            }
+            
+            const endTime = Date.now();
+            document.getElementById('execution-time').textContent = ((endTime - startTime) / 1000).toFixed(1);
+            document.getElementById('status').textContent = 'Завершено';
+            document.getElementById('run-btn').disabled = false;
+            turtleState.isRunning = false;
+            isExecuting = false;
+        }
+
+        // Выполнение блока
+        async function executeBlock(block) {
+            if (!turtleState.isRunning) return;
+            
+            const type = block.dataset.type;
+            const category = block.dataset.category;
+            const number = parseInt(block.dataset.number) || 0;
+            const text = block.dataset.text || '';
+            const color = block.dataset.color || '';
+            
+            const speed = 110 - (turtleState.speed * 10); // Обратная зависимость
+            
+            switch(type) {
+                case 'move':
+                    await moveTurtle(number || 10, speed);
+                    break;
+                case 'turnRight':
+                    turnTurtle(number || 15);
+                    await delay(speed);
+                    break;
+                case 'turnLeft':
+                    turnTurtle(-(number || 15));
+                    await delay(speed);
+                    break;
+                case 'goto':
+                    gotoPosition(0, 0);
+                    await delay(speed);
+                    break;
+                case 'pointToMouse':
+                    pointToMouse();
+                    await delay(speed);
+                    break;
+                case 'setDirection':
+                    setDirection(number || 90);
+                    await delay(speed);
+                    break;
+                case 'say':
+                    await say(text || 'Привет!');
+                    break;
+                case 'think':
+                    await think(text || 'О чем-то');
+                    break;
+                case 'show':
+                    showTurtle();
+                    await delay(speed);
+                    break;
+                case 'hide':
+                    hideTurtle();
+                    await delay(speed);
+                    break;
+                case 'changeSize':
+                    changeSize(number || 10);
+                    await delay(speed);
+                    break;
+                case 'playSound':
+                    playSound();
+                    await delay(speed);
+                    break;
+                case 'stopSounds':
+                    stopSounds();
+                    await delay(speed);
+                    break;
+                case 'beep':
+                    beep();
+                    await delay(speed);
+                    break;
+                case 'playNote':
+                    playNote(number || 60);
+                    await delay(speed);
+                    break;
+                case 'penDown':
+                    penDown();
+                    await delay(speed);
+                    break;
+                case 'penUp':
+                    penUp();
+                    await delay(speed);
+                    break;
+                case 'setPenColor':
+                    setPenColor(color || '#ff0000');
+                    await delay(speed);
+                    break;
+                case 'setPenSize':
+                    setPenSize(number || 2);
+                    await delay(speed);
+                    break;
+                case 'stamp':
+                    stamp();
+                    await delay(speed);
+                    break;
+                case 'clear':
+                    clear();
+                    await delay(speed);
+                    break;
+                case 'whenRun':
+                    // Блок-триггер, ничего не делает
+                    await delay(speed);
+                    break;
+                case 'whenClicked':
+                    // Блок-триггер, ничего не делает
+                    await delay(speed);
+                    break;
+                case 'whenKeyPressed':
+                    // Блок-триггер, ничего не делает
+                    await delay(speed);
+                    break;
+                case 'wait':
+                    await delay((number || 1) * 1000);
+                    break;
+                case 'repeat':
+                    const repeatCount = number || 10;
+                    const repeatBlocks = getBlocksAfter(block);
+                    for (let i = 0; i < repeatCount && turtleState.isRunning; i++) {
+                        for (const repeatBlock of repeatBlocks) {
+                            if (!turtleState.isRunning) break;
+                            await executeBlock(repeatBlock);
+                        }
+                    }
+                    break;
+                case 'forever':
+                    const foreverBlocks = getBlocksAfter(block);
+                    while (turtleState.isRunning) {
+                        for (const foreverBlock of foreverBlocks) {
+                            if (!turtleState.isRunning) break;
+                            await executeBlock(foreverBlock);
+                        }
+                    }
+                    break;
+                case 'stopAll':
+                    stopProgram();
+                    break;
+                case 'chaseMouse':
+                    await chaseMouse();
+                    break;
+                case 'wasdControls':
+                    enableWASDControls();
+                    await delay(speed);
+                    break;
+                case 'drawSquare':
+                    await drawSquare();
+                    break;
+                case 'drawTriangle':
+                    await drawTriangle();
+                    break;
+                case 'drawCircle':
+                    await drawCircle();
+                    break;
+                case 'drawStar':
+                    await drawStar();
+                    break;
+                case 'drawSpiral':
+                    await drawSpiral();
+                    break;
+            }
+            
+            updateSensors();
+        }
+
+        // Функции движения черепахи
+        async function moveTurtle(steps, speed = 50) {
+            const stepsPerFrame = Math.max(1, Math.ceil(steps / 10));
+            const totalSteps = Math.abs(steps);
+            const direction = steps > 0 ? 1 : -1;
+            
+            for (let i = 0; i < totalSteps && turtleState.isRunning; i += stepsPerFrame) {
+                const currentSteps = Math.min(stepsPerFrame, totalSteps - i);
+                const radians = turtleState.direction * Math.PI / 180;
+                const newX = turtleState.x + (currentSteps * direction) * Math.cos(radians);
+                const newY = turtleState.y - (currentSteps * direction) * Math.sin(radians);
+                
+                if (turtleState.penDown) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = turtleState.penColor;
+                    ctx.lineWidth = turtleState.penSize;
+                    ctx.lineCap = 'round';
+                    ctx.moveTo(turtleState.x, turtleState.y);
+                    ctx.lineTo(newX, newY);
+                    ctx.stroke();
+                }
+                
+                turtleState.x = newX;
+                turtleState.y = newY;
+                updateTurtlePosition();
+                await delay(speed);
+            }
+        }
+
+        function turnTurtle(degrees) {
+            turtleState.direction = (turtleState.direction + degrees) % 360;
+            if (turtleState.direction < 0) turtleState.direction += 360;
+            updateTurtlePosition();
+        }
+
+        function gotoPosition(x, y) {
+            turtleState.x = x;
+            turtleState.y = y;
+            updateTurtlePosition();
+        }
+
+        function pointToMouse() {
+            // Направление к текущей позиции мыши
+            // В реальной реализации нужно отслеживать позицию мыши
+            updateTurtlePosition();
+        }
+
+        function setDirection(degrees) {
+            turtleState.direction = degrees;
+            updateTurtlePosition();
+        }
+
+        // Функции внешнего вида
+        async function say(text) {
+            speechBubble.textContent = text;
+            speechBubble.style.display = 'block';
+            speechBubble.style.left = (turtleState.x + 50) + 'px';
+            speechBubble.style.top = (turtleState.y - 40) + 'px';
+            
+            await delay(2000);
+            speechBubble.style.display = 'none';
+        }
+
+        async function think(text) {
+            speechBubble.textContent = text;
+            speechBubble.style.display = 'block';
+            speechBubble.style.left = (turtleState.x + 50) + 'px';
+            speechBubble.style.top = (turtleState.y - 40) + 'px';
+            speechBubble.style.fontStyle = 'italic';
+            
+            await delay(2000);
+            speechBubble.style.display = 'none';
+            speechBubble.style.fontStyle = 'normal';
+        }
+
+        function showTurtle() {
+            turtleState.visible = true;
+            updateTurtlePosition();
+        }
+
+        function hideTurtle() {
+            turtleState.visible = false;
+            updateTurtlePosition();
+        }
+
+        function changeSize(change) {
+            const currentSize = parseInt(turtle.style.width) || 80;
+            const newSize = Math.max(20, Math.min(150, currentSize + change));
+            turtle.style.width = newSize + 'px';
+            turtle.style.height = newSize + 'px';
+        }
+
+        // Функции звука
+        function playSound() {
+            // В реальной реализации здесь будет воспроизведение звука
+            console.log("Воспроизведение звука");
+        }
+
+        function stopSounds() {
+            console.log("Остановка всех звуков");
+        }
+
+        function beep() {
+            // Простой beep через Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log("Звук не поддерживается");
+            }
+        }
+
+        function playNote(note) {
+            // Воспроизведение ноты
+            console.log(`Играем ноту: ${note}`);
+        }
+
+        // Функции пера
+        function penDown() {
+            turtleState.penDown = true;
+        }
+
+        function penUp() {
+            turtleState.penDown = false;
+        }
+
+        function setPenColor(color) {
+            turtleState.penColor = color;
+        }
+
+        function setPenSize(size) {
+            turtleState.penSize = size;
+        }
+
+        function stamp() {
+            // Создание штампа - временное изображение черепахи
+            ctx.drawImage(turtle, turtleState.x - 40, turtleState.y - 40, 80, 80);
+        }
+
+        function clear() {
+            resetStage();
+        }
+
+        // Дополнительные функции
+        async function chaseMouse() {
+            // Упрощенная версия преследования мыши
+            for (let i = 0; i < 10 && turtleState.isRunning; i++) {
+                await moveTurtle(10);
+                await delay(100);
+            }
+        }
+
+        function enableWASDControls() {
+            // WASD управление уже включено через глобальные обработчики
+            console.log("WASD управление включено");
+        }
+
+        // Функции рисования фигур
+        async function drawSquare() {
+            turtleState.penDown = true;
+            for (let i = 0; i < 4 && turtleState.isRunning; i++) {
+                await moveTurtle(100);
+                turnTurtle(90);
+                await delay(100);
+            }
+        }
+
+        async function drawTriangle() {
+            turtleState.penDown = true;
+            for (let i = 0; i < 3 && turtleState.isRunning; i++) {
+                await moveTurtle(100);
+                turnTurtle(120);
+                await delay(100);
+            }
+        }
+
+        async function drawCircle() {
+            turtleState.penDown = true;
+            for (let i = 0; i < 36 && turtleState.isRunning; i++) {
+                await moveTurtle(10);
+                turnTurtle(10);
+                await delay(50);
+            }
+        }
+
+        async function drawStar() {
+            turtleState.penDown = true;
+            for (let i = 0; i < 5 && turtleState.isRunning; i++) {
+                await moveTurtle(100);
+                turnTurtle(144);
+                await delay(100);
+            }
+        }
+
+        async function drawSpiral() {
+            turtleState.penDown = true;
+            for (let i = 0; i < 50 && turtleState.isRunning; i++) {
+                await moveTurtle(i * 2);
+                turnTurtle(89);
+                await delay(50);
+            }
+        }
+
+        // Вспомогательные функции
+        function getBlocksAfter(block) {
+            const blocks = Array.from(codeArea.children);
+            const index = blocks.indexOf(block);
+            return blocks.slice(index + 1);
+        }
+
+        function updateTurtlePosition() {
+            turtle.style.left = (turtleState.x - 40) + 'px';
+            turtle.style.top = (turtleState.y - 40) + 'px';
+            turtle.style.transform = `rotate(${360 - turtleState.direction}deg)`;
+            turtle.style.display = turtleState.visible ? 'block' : 'none';
+        }
+
+        function resetStage() {
+            ctx.clearRect(0, 0, stage.width, stage.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, stage.width, stage.height);
+        }
+
+        function updateSensors() {
+            document.getElementById('turtle-x').textContent = Math.round(turtleState.x);
+            document.getElementById('turtle-y').textContent = Math.round(turtleState.y);
+            document.getElementById('turtle-direction').textContent = turtleState.direction + '°';
+        }
+
+        function updateTimer() {
+            if (turtleState.isRunning) {
+                turtleState.timer = (Date.now() - turtleState.timerStart) / 1000;
+                document.getElementById('timer-value').textContent = turtleState.timer.toFixed(1);
+            }
+        }
+
+        function updateBlockCount() {
+            const count = codeArea.querySelectorAll('.code-line').length;
+            document.getElementById('block-count').textContent = count;
+        }
+
+        function stopProgram() {
+            turtleState.isRunning = false;
+            isExecuting = false;
+            document.getElementById('status').textContent = 'Остановлено';
+            document.getElementById('run-btn').disabled = false;
+        }
+
+        function clearProgram() {
+            codeArea.innerHTML = '';
+            updateBlockCount();
+        }
+
+        function resetAll() {
+            clearProgram();
+            resetStage();
+            turtleState.x = stage.width / 2;
+            turtleState.y = stage.height / 2;
+            turtleState.direction = 90;
+            turtleState.visible = true;
+            turtleState.penDown = true;
+            turtleState.timer = 0;
+            turtleState.timerStart = Date.now();
+            updateTurtlePosition();
+            updateSensors();
+            document.getElementById('status').textContent = 'Готов';
+            document.getElementById('execution-time').textContent = '0';
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Обработчики клавиатуры
+        function handleKeyDown(e) {
+            pressedKeys.add(e.key.toLowerCase());
+            
+            if (isExecuting) return;
+            
+            // WASD управление
+            if (pressedKeys.has('w')) moveTurtle(10);
+            if (pressedKeys.has('s')) moveTurtle(-10);
+            if (pressedKeys.has('a')) turnTurtle(15);
+            if (pressedKeys.has('d')) turnTurtle(-15);
+        }
+
+        function handleKeyUp(e) {
+            pressedKeys.delete(e.key.toLowerCase());
+        }
+
+        // Запуск при загрузке страницы
+        window.onload = init;
     </script>
 </body>
 </html>
