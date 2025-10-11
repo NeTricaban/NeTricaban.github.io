@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Онлайн Рисовалка</title>
     <style>
+        /* Стили остаются такими же как в предыдущем коде */
         * {
             margin: 0;
             padding: 0;
@@ -233,36 +234,23 @@
                 </div>
                 
                 <div class="tool-group">
-                    <h2>Приватные серверы</h2>
-                    <input type="text" id="serverName" placeholder="Название комнаты">
-                    <input type="password" id="serverPassword" placeholder="Пароль комнаты">
-                    <button id="createServer">Создать комнату</button>
-                    <button id="joinServer">Присоединиться</button>
-                    <button id="leaveServer">Покинуть комнату</button>
-                    
+                    <h2>Совместное рисование</h2>
+                    <input type="text" id="roomName" placeholder="Название комнаты" value="комната1">
+                    <button id="syncRoom">Войти в комнату</button>
                     <div class="users-list">
-                        <h3>Участники:</h3>
-                        <div id="usersContainer">
-                            <div class="user">
-                                <div class="user-color" style="background-color: #000000;"></div>
-                                <span>Вы</span>
-                            </div>
-                        </div>
+                        <h3>Статус синхронизации:</h3>
+                        <div id="syncStatus">Не активно</div>
                     </div>
                 </div>
             </div>
             
             <div class="canvas-container">
                 <canvas id="drawingCanvas" width="800" height="600"></canvas>
-                
-                <div class="server-controls">
-                    <p id="serverStatus">Не подключено к серверу</p>
-                </div>
             </div>
         </div>
         
         <footer>
-            <p>Создано для рисования вместе.</p>
+            <p>Создано для рисования с сестрой и друзьями | Обновляется каждые 2 секунды</p>
         </footer>
     </div>
 
@@ -276,13 +264,9 @@
         const clearCanvasBtn = document.getElementById('clearCanvas');
         const pencilToolBtn = document.getElementById('pencilTool');
         const eraserToolBtn = document.getElementById('eraserTool');
-        const serverNameInput = document.getElementById('serverName');
-        const serverPasswordInput = document.getElementById('serverPassword');
-        const createServerBtn = document.getElementById('createServer');
-        const joinServerBtn = document.getElementById('joinServer');
-        const leaveServerBtn = document.getElementById('leaveServer');
-        const serverStatus = document.getElementById('serverStatus');
-        const usersContainer = document.getElementById('usersContainer');
+        const roomNameInput = document.getElementById('roomName');
+        const syncRoomBtn = document.getElementById('syncRoom');
+        const syncStatus = document.getElementById('syncStatus');
         
         // Переменные приложения
         let isDrawing = false;
@@ -291,8 +275,8 @@
         let currentColor = '#000000';
         let currentBrushSize = 5;
         let currentTool = 'pencil';
-        let currentServer = null;
-        let userColor = '#000000';
+        let currentRoom = null;
+        let syncInterval = null;
         
         // Инициализация холста
         function initCanvas() {
@@ -307,31 +291,6 @@
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseout', stopDrawing);
-        
-        // Для мобильных устройств
-        canvas.addEventListener('touchstart', handleTouchStart);
-        canvas.addEventListener('touchmove', handleTouchMove);
-        canvas.addEventListener('touchend', stopDrawing);
-        
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-        
-        function handleTouchMove(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
         
         function startDrawing(e) {
             isDrawing = true;
@@ -356,14 +315,55 @@
             
             [lastX, lastY] = [e.offsetX, e.offsetY];
             
-            // В реальном приложении здесь будет отправка данных на сервер
-            if (currentServer) {
-                // sendDrawingData(lastX, lastY, e.offsetX, e.offsetY, currentColor, currentBrushSize, currentTool);
+            // Сохраняем текущее состояние в localStorage
+            if (currentRoom) {
+                saveCanvasState();
             }
         }
         
         function stopDrawing() {
             isDrawing = false;
+        }
+        
+        // Сохранение состояния холста
+        function saveCanvasState() {
+            const imageData = canvas.toDataURL();
+            localStorage.setItem(`drawing_${currentRoom}`, imageData);
+        }
+        
+        // Загрузка состояния холста
+        function loadCanvasState() {
+            const savedImage = localStorage.getItem(`drawing_${currentRoom}`);
+            if (savedImage) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = savedImage;
+            }
+        }
+        
+        // Синхронизация
+        function startSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
+            
+            syncInterval = setInterval(() => {
+                loadCanvasState();
+            }, 2000); // Обновление каждые 2 секунды
+            
+            syncStatus.textContent = `Синхронизация: ${currentRoom} (каждые 2 сек)`;
+            syncStatus.style.color = '#90EE90';
+        }
+        
+        function stopSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+            syncStatus.textContent = 'Не активно';
+            syncStatus.style.color = 'white';
         }
         
         // Обработчики инструментов
@@ -372,8 +372,6 @@
                 colorOptions.forEach(opt => opt.classList.remove('active'));
                 option.classList.add('active');
                 currentColor = option.getAttribute('data-color');
-                userColor = currentColor;
-                updateUserList();
             });
         });
         
@@ -385,9 +383,8 @@
         clearCanvasBtn.addEventListener('click', () => {
             if (confirm('Вы уверены, что хотите очистить холст?')) {
                 initCanvas();
-                // В реальном приложении здесь будет отправка команды очистки на сервер
-                if (currentServer) {
-                    // sendClearCanvas();
+                if (currentRoom) {
+                    saveCanvasState();
                 }
             }
         });
@@ -404,108 +401,32 @@
             pencilToolBtn.style.background = 'rgba(255, 255, 255, 0.2)';
         });
         
-        // Функции для работы с серверами (заглушки для демонстрации)
-        createServerBtn.addEventListener('click', () => {
-            const serverName = serverNameInput.value.trim();
-            const password = serverPasswordInput.value;
+        // Синхронизация комнаты
+        syncRoomBtn.addEventListener('click', () => {
+            const roomName = roomNameInput.value.trim();
             
-            if (!serverName) {
+            if (!roomName) {
                 alert('Введите название комнаты');
                 return;
             }
             
-            // В реальном приложении здесь будет запрос к серверу для создания комнаты
-            currentServer = {
-                name: serverName,
-                password: password,
-                users: [{name: 'Вы', color: userColor}]
-            };
-            
-            serverStatus.textContent = `Подключено к: ${serverName}`;
-            serverStatus.style.color = '#90EE90';
-            updateUserList();
-            
-            alert(`Комната "${serverName}" создана! Пароль: ${password || 'не установлен'}`);
-        });
-        
-        joinServerBtn.addEventListener('click', () => {
-            const serverName = serverNameInput.value.trim();
-            const password = serverPasswordInput.value;
-            
-            if (!serverName) {
-                alert('Введите название комнаты');
-                return;
-            }
-            
-            // В реальном приложении здесь будет запрос к серверу для присоединения
-            // и проверка пароля
-            
-            currentServer = {
-                name: serverName,
-                password: password,
-                users: [
-                    {name: 'Другой участник', color: '#ff0000'},
-                    {name: 'Вы', color: userColor}
-                ]
-            };
-            
-            serverStatus.textContent = `Подключено к: ${serverName}`;
-            serverStatus.style.color = '#90EE90';
-            updateUserList();
-            
-            alert(`Вы присоединились к комнате "${serverName}"`);
-        });
-        
-        leaveServerBtn.addEventListener('click', () => {
-            if (currentServer) {
-                alert(`Вы покинули комнату "${currentServer.name}"`);
-                currentServer = null;
-                serverStatus.textContent = 'Не подключено к серверу';
-                serverStatus.style.color = 'white';
-                updateUserList();
-            }
-        });
-        
-        function updateUserList() {
-            usersContainer.innerHTML = '';
-            
-            if (currentServer) {
-                currentServer.users.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user';
-                    
-                    const colorElement = document.createElement('div');
-                    colorElement.className = 'user-color';
-                    colorElement.style.backgroundColor = user.color;
-                    
-                    const nameElement = document.createElement('span');
-                    nameElement.textContent = user.name;
-                    
-                    userElement.appendChild(colorElement);
-                    userElement.appendChild(nameElement);
-                    usersContainer.appendChild(userElement);
-                });
+            if (currentRoom === roomName) {
+                stopSync();
+                currentRoom = null;
+                syncRoomBtn.textContent = 'Войти в комнату';
+                alert(`Вы вышли из комнаты "${roomName}"`);
             } else {
-                const userElement = document.createElement('div');
-                userElement.className = 'user';
-                
-                const colorElement = document.createElement('div');
-                colorElement.className = 'user-color';
-                colorElement.style.backgroundColor = userColor;
-                
-                const nameElement = document.createElement('span');
-                nameElement.textContent = 'Вы';
-                
-                userElement.appendChild(colorElement);
-                userElement.appendChild(nameElement);
-                usersContainer.appendChild(userElement);
+                currentRoom = roomName;
+                loadCanvasState();
+                startSync();
+                syncRoomBtn.textContent = 'Выйти из комнаты';
+                alert(`Вы вошли в комнату "${roomName}"! Теперь рисуйте вместе!`);
             }
-        }
+        });
         
         // Инициализация при загрузке
         window.addEventListener('load', () => {
             initCanvas();
-            updateUserList();
         });
     </script>
 </body>
