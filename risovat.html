@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн Рисовалка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .tools-panel {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .canvas-container {
+            flex: 3;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .tool-group {
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.active {
+            border: 2px solid white;
+            transform: scale(1.2);
+        }
+        
+        .brush-size {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: calc(100% - 10px);
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        #clearCanvas {
+            background: rgba(255, 50, 50, 0.7);
+        }
+        
+        #clearCanvas:hover {
+            background: rgba(255, 50, 50, 0.9);
+        }
+        
+        canvas {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            cursor: crosshair;
+            max-width: 100%;
+        }
+        
+        .server-controls {
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .users-list {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .user {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .user-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .tools-panel, .canvas-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Онлайн Рисовалка</h1>
+            <p>Рисуйте вместе с друзьями в реальном времени!</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="tools-panel">
+                <div class="tool-group">
+                    <h2>Инструменты</h2>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #000000;" data-color="#000000"></div>
+                        <div class="color-option" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                        <div class="color-option" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                        <div class="color-option" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                        <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-option" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                        <div class="color-option" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                        <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
+                    </div>
+                    
+                    <label for="brushSize">Размер кисти: <span id="brushSizeValue">5</span>px</label>
+                    <input type="range" id="brushSize" class="brush-size" min="1" max="50" value="5">
+                    
+                    <button id="pencilTool">Карандаш</button>
+                    <button id="eraserTool">Ластик</button>
+                    <button id="clearCanvas">Очистить холст</button>
+                </div>
+                
+                <div class="tool-group">
+                    <h2>Приватные серверы</h2>
+                    <input type="text" id="serverName" placeholder="Название комнаты">
+                    <input type="password" id="serverPassword" placeholder="Пароль комнаты">
+                    <button id="createServer">Создать комнату</button>
+                    <button id="joinServer">Присоединиться</button>
+                    <button id="leaveServer">Покинуть комнату</button>
+                    
+                    <div class="users-list">
+                        <h3>Участники:</h3>
+                        <div id="usersContainer">
+                            <div class="user">
+                                <div class="user-color" style="background-color: #000000;"></div>
+                                <span>Вы</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="drawingCanvas" width="800" height="600"></canvas>
+                
+                <div class="server-controls">
+                    <p id="serverStatus">Не подключено к серверу</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Создано для рисования вместе.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Элементы DOM
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const brushSizeSlider = document.getElementById('brushSize');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        const clearCanvasBtn = document.getElementById('clearCanvas');
+        const pencilToolBtn = document.getElementById('pencilTool');
+        const eraserToolBtn = document.getElementById('eraserTool');
+        const serverNameInput = document.getElementById('serverName');
+        const serverPasswordInput = document.getElementById('serverPassword');
+        const createServerBtn = document.getElementById('createServer');
+        const joinServerBtn = document.getElementById('joinServer');
+        const leaveServerBtn = document.getElementById('leaveServer');
+        const serverStatus = document.getElementById('serverStatus');
+        const usersContainer = document.getElementById('usersContainer');
+        
+        // Переменные приложения
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentColor = '#000000';
+        let currentBrushSize = 5;
+        let currentTool = 'pencil';
+        let currentServer = null;
+        let userColor = '#000000';
+        
+        // Инициализация холста
+        function initCanvas() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+        }
+        
+        // Обработчики событий для рисования
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // Для мобильных устройств
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            
+            if (currentTool === 'pencil') {
+                ctx.strokeStyle = currentColor;
+            } else if (currentTool === 'eraser') {
+                ctx.strokeStyle = '#ffffff';
+            }
+            
+            ctx.lineWidth = currentBrushSize;
+            ctx.stroke();
+            
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+            
+            // В реальном приложении здесь будет отправка данных на сервер
+            if (currentServer) {
+                // sendDrawingData(lastX, lastY, e.offsetX, e.offsetY, currentColor, currentBrushSize, currentTool);
+            }
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // Обработчики инструментов
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                currentColor = option.getAttribute('data-color');
+                userColor = currentColor;
+                updateUserList();
+            });
+        });
+        
+        brushSizeSlider.addEventListener('input', () => {
+            currentBrushSize = brushSizeSlider.value;
+            brushSizeValue.textContent = currentBrushSize;
+        });
+        
+        clearCanvasBtn.addEventListener('click', () => {
+            if (confirm('Вы уверены, что хотите очистить холст?')) {
+                initCanvas();
+                // В реальном приложении здесь будет отправка команды очистки на сервер
+                if (currentServer) {
+                    // sendClearCanvas();
+                }
+            }
+        });
+        
+        pencilToolBtn.addEventListener('click', () => {
+            currentTool = 'pencil';
+            pencilToolBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+            eraserToolBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+        });
+        
+        eraserToolBtn.addEventListener('click', () => {
+            currentTool = 'eraser';
+            eraserToolBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+            pencilToolBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+        });
+        
+        // Функции для работы с серверами (заглушки для демонстрации)
+        createServerBtn.addEventListener('click', () => {
+            const serverName = serverNameInput.value.trim();
+            const password = serverPasswordInput.value;
+            
+            if (!serverName) {
+                alert('Введите название комнаты');
+                return;
+            }
+            
+            // В реальном приложении здесь будет запрос к серверу для создания комнаты
+            currentServer = {
+                name: serverName,
+                password: password,
+                users: [{name: 'Вы', color: userColor}]
+            };
+            
+            serverStatus.textContent = `Подключено к: ${serverName}`;
+            serverStatus.style.color = '#90EE90';
+            updateUserList();
+            
+            alert(`Комната "${serverName}" создана! Пароль: ${password || 'не установлен'}`);
+        });
+        
+        joinServerBtn.addEventListener('click', () => {
+            const serverName = serverNameInput.value.trim();
+            const password = serverPasswordInput.value;
+            
+            if (!serverName) {
+                alert('Введите название комнаты');
+                return;
+            }
+            
+            // В реальном приложении здесь будет запрос к серверу для присоединения
+            // и проверка пароля
+            
+            currentServer = {
+                name: serverName,
+                password: password,
+                users: [
+                    {name: 'Другой участник', color: '#ff0000'},
+                    {name: 'Вы', color: userColor}
+                ]
+            };
+            
+            serverStatus.textContent = `Подключено к: ${serverName}`;
+            serverStatus.style.color = '#90EE90';
+            updateUserList();
+            
+            alert(`Вы присоединились к комнате "${serverName}"`);
+        });
+        
+        leaveServerBtn.addEventListener('click', () => {
+            if (currentServer) {
+                alert(`Вы покинули комнату "${currentServer.name}"`);
+                currentServer = null;
+                serverStatus.textContent = 'Не подключено к серверу';
+                serverStatus.style.color = 'white';
+                updateUserList();
+            }
+        });
+        
+        function updateUserList() {
+            usersContainer.innerHTML = '';
+            
+            if (currentServer) {
+                currentServer.users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user';
+                    
+                    const colorElement = document.createElement('div');
+                    colorElement.className = 'user-color';
+                    colorElement.style.backgroundColor = user.color;
+                    
+                    const nameElement = document.createElement('span');
+                    nameElement.textContent = user.name;
+                    
+                    userElement.appendChild(colorElement);
+                    userElement.appendChild(nameElement);
+                    usersContainer.appendChild(userElement);
+                });
+            } else {
+                const userElement = document.createElement('div');
+                userElement.className = 'user';
+                
+                const colorElement = document.createElement('div');
+                colorElement.className = 'user-color';
+                colorElement.style.backgroundColor = userColor;
+                
+                const nameElement = document.createElement('span');
+                nameElement.textContent = 'Вы';
+                
+                userElement.appendChild(colorElement);
+                userElement.appendChild(nameElement);
+                usersContainer.appendChild(userElement);
+            }
+        }
+        
+        // Инициализация при загрузке
+        window.addEventListener('load', () => {
+            initCanvas();
+            updateUserList();
+        });
+    </script>
+</body>
+</html>
