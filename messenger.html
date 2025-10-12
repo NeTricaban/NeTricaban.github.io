@@ -3,376 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Messenger - GitHub Pages</title>
+    <title>My GitHub Messenger</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .container {
+            width: 100%;
             max-width: 400px;
-            margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
             overflow: hidden;
-            height: 700px;
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
         
-        /* Header */
         .header {
-            background: #0084ff;
+            background: #2C3E50;
             color: white;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
         }
         
         .status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             margin-top: 10px;
             font-size: 14px;
+            color: #BDC3C7;
         }
         
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ff4757;
-        }
-        
-        .status-dot.online {
-            background: #2ed573;
-        }
-        
-        /* Login Screen */
         .login-screen {
-            padding: 40px 20px;
+            padding: 40px 30px;
             text-align: center;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
         
         .login-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin: 10px 0;
+            padding: 16px;
+            border: 2px solid #BDC3C7;
+            border-radius: 12px;
+            margin: 15px 0;
             font-size: 16px;
             text-align: center;
         }
         
         .login-btn {
             width: 100%;
-            padding: 15px;
-            background: #0084ff;
+            padding: 16px;
+            background: #27AE60;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
         }
         
-        /* Chat Screen */
         .chat-screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             display: none;
-        }
-        
-        .chat-header {
-            background: #f8f9fa;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .online-count {
-            color: #666;
-            font-size: 14px;
+            flex-direction: column;
+            height: 500px;
         }
         
         .messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background: #f8f9fa;
+            background: #ECF0F1;
         }
         
         .message {
             margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: white;
             max-width: 80%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .message.own {
+            background: #3498DB;
+            color: white;
             margin-left: auto;
         }
         
-        .message-bubble {
-            padding: 12px 16px;
-            border-radius: 18px;
-            background: white;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .message.own .message-bubble {
-            background: #0084ff;
-            color: white;
-            border: none;
-        }
-        
         .message-sender {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
             font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 5px;
         }
         
-        .message.own .message-sender {
-            text-align: right;
-            color: #0084ff;
-        }
-        
-        .message-time {
-            font-size: 11px;
-            color: #999;
-            margin-top: 5px;
-            text-align: right;
-        }
-        
-        .system-message {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        
-        .chat-input-container {
-            padding: 15px;
-            border-top: 1px solid #e9ecef;
-            background: white;
-        }
-        
-        .input-group {
+        .chat-input {
             display: flex;
+            padding: 20px;
             gap: 10px;
+            background: white;
+            border-top: 1px solid #BDC3C7;
         }
         
         .message-input {
             flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 25px;
+            padding: 12px 16px;
+            border: 1px solid #BDC3C7;
+            border-radius: 20px;
             outline: none;
-            font-size: 14px;
-        }
-        
-        .message-input:focus {
-            border-color: #0084ff;
         }
         
         .send-btn {
-            background: #0084ff;
+            background: #27AE60;
             color: white;
             border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            padding: 12px 20px;
+            border-radius: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
         }
         
-        .user-list {
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-            max-width: 200px;
-        }
-        
-        .user-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f3f4;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .user-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #2ed573;
+        .test-notice {
+            background: #FFF3CD;
+            color: #856404;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            border-bottom: 1px solid #FFEEBA;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h2>💬 Online Messenger</h2>
-            <div class="status">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Отключено</span>
-            </div>
+        <div class="test-notice">
+            🔓 Тестовый режим • 30 дней
         </div>
         
-        <!-- Login Screen -->
+        <div class="header">
+            <h2>💬 My GitHub Messenger</h2>
+            <div class="status" id="status">Отключено</div>
+        </div>
+        
         <div class="login-screen" id="loginScreen">
-            <h3>Войдите в мессенджер</h3>
-            <p style="color: #666; margin: 20px 0;">Общайтесь в реальном времени</p>
+            <h3>Вход в чат</h3>
+            <p style="color: #7F8C8D; margin: 10px 0;">my-github-messenger</p>
             
             <input type="text" id="usernameInput" class="login-input" placeholder="Ваше имя" value="Пользователь">
             <button onclick="login()" class="login-btn">Войти в чат</button>
-            
-            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-                <h4>📱 Особенности:</h4>
-                <p style="font-size: 14px; color: #666; margin: 10px 0;">• Реальное время</p>
-                <p style="font-size: 14px; color: #666; margin: 10px 0;">• Онлайн пользователи</p>
-                <p style="font-size: 14px; color: #666; margin: 10px 0;">• Работает на GitHub Pages</p>
-            </div>
         </div>
         
-        <!-- Chat Screen -->
         <div class="chat-screen" id="chatScreen">
-            <div class="chat-header">
-                <div>
-                    <strong>Общий чат</strong>
-                    <div class="online-count" id="onlineCount">0 онлайн</div>
-                </div>
-                <button onclick="showUsers()" style="background: none; border: none; cursor: pointer; font-size: 20px;">👥</button>
-            </div>
-            
             <div class="messages" id="messages">
-                <div class="system-message">Добро пожаловать в чат!</div>
+                <div style="text-align: center; color: #7F8C8D; padding: 20px;">
+                    Добро пожаловать в чат!
+                </div>
             </div>
             
-            <div class="chat-input-container">
-                <div class="input-group">
-                    <input type="text" id="messageInput" class="message-input" placeholder="Введите сообщение...">
-                    <button onclick="sendMessage()" class="send-btn">➤</button>
-                </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" class="message-input" placeholder="Напишите сообщение...">
+                <button onclick="sendMessage()" class="send-btn">Отправить</button>
             </div>
         </div>
     </div>
-    
-    <!-- Online Users List -->
-    <div class="user-list" id="userList">
-        <div style="font-weight: bold; margin-bottom: 10px;">Онлайн:</div>
-        <div id="usersContainer"></div>
-    </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (старая версия для совместимости) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     
     <script>
-        // Firebase configuration
+        // ⚡ ТВОЙ КОНФИГ Firebase
         const firebaseConfig = {
-            // Эти данные нужно получить бесплатно на firebase.google.com
-            apiKey: "AIzaSyC4mJ6J7VQ2Q8Y8Q8Y8Q8Y8Q8Y8Q8Y8Q8Y8",
-            authDomain: "github-messenger.firebaseapp.com",
-            databaseURL: "https://github-messenger-default-rtdb.firebaseio.com",
-            projectId: "github-messenger",
-            storageBucket: "github-messenger.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyBPJHA9xBK-yO0giaxITea2ckejnuPvwos",
+            authDomain: "my-github-messenger.firebaseapp.com",
+            databaseURL: "https://my-github-messenger-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "my-github-messenger",
+            storageBucket: "my-github-messenger.firebasestorage.app",
+            messagingSenderId: "555869914189",
+            appId: "1:555869914189:web:2acc7882e5b24598f14804"
         };
-        
+
         // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
         let currentUser = null;
-        let usersRef, messagesRef;
-        
+
         function login() {
             const username = document.getElementById('usernameInput').value.trim();
             if (!username) {
-                alert('Введите имя');
+                alert('Введите ваше имя!');
                 return;
             }
             
             currentUser = {
-                id: generateId(),
-                name: username,
-                lastSeen: Date.now(),
-                online: true
+                id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                name: username
             };
-            
-            // Инициализируем ссылки на базу данных
-            usersRef = database.ref('users');
-            messagesRef = database.ref('messages');
-            
-            // Сохраняем пользователя
-            usersRef.child(currentUser.id).set({
-                name: currentUser.name,
-                online: true,
-                lastSeen: Date.now()
-            });
             
             // Показываем чат
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('chatScreen').style.display = 'flex';
-            document.getElementById('statusDot').classList.add('online');
-            document.getElementById('statusText').textContent = 'Онлайн';
+            document.getElementById('status').textContent = '✅ Подключено к my-github-messenger';
+            document.getElementById('status').style.color = '#27AE60';
             
             // Загружаем сообщения
             loadMessages();
             
             // Слушаем новые сообщения
-            messagesRef.limitToLast(100).on('child_added', (snapshot) => {
+            database.ref('messages').limitToLast(100).on('child_added', (snapshot) => {
                 const message = snapshot.val();
                 displayMessage(message);
             });
             
-            // Слушаем онлайн пользователей
-            usersRef.on('value', (snapshot) => {
-                updateOnlineUsers(snapshot.val());
-            });
-            
-            // Обновляем онлайн статус каждые 30 секунд
-            setInterval(() => {
-                if (currentUser) {
-                    usersRef.child(currentUser.id).update({
-                        lastSeen: Date.now(),
-                        online: true
-                    });
+            // Отправка по Enter
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
                 }
-            }, 30000);
+            });
         }
-        
+
         function loadMessages() {
-            messagesRef.limitToLast(50).once('value', (snapshot) => {
+            database.ref('messages').limitToLast(50).once('value', (snapshot) => {
+                const messagesContainer = document.getElementById('messages');
+                messagesContainer.innerHTML = '';
+                
                 const messages = snapshot.val();
                 if (messages) {
                     Object.values(messages).forEach(message => {
@@ -381,27 +242,21 @@
                 }
             });
         }
-        
+
         function displayMessage(message) {
             const messagesContainer = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             
-            if (message.type === 'system') {
-                messageDiv.className = 'system-message';
-                messageDiv.textContent = message.text;
-            } else {
-                messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
-                messageDiv.innerHTML = `
-                    <div class="message-sender">${message.userName}</div>
-                    <div class="message-bubble">${message.text}</div>
-                    <div class="message-time">${formatTime(message.timestamp)}</div>
-                `;
-            }
+            messageDiv.className = `message ${message.userId === currentUser?.id ? 'own' : ''}`;
+            messageDiv.innerHTML = `
+                <div class="message-sender">${message.userName}</div>
+                <div>${message.text}</div>
+            `;
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-        
+
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const text = input.value.trim();
@@ -412,141 +267,33 @@
                 userId: currentUser.id,
                 userName: currentUser.name,
                 text: text,
-                timestamp: Date.now(),
-                type: 'user'
+                timestamp: Date.now()
             };
             
-            // Сохраняем сообщение в Firebase
-            messagesRef.push(message);
-            
+            // Сохраняем в Firebase
+            database.ref('messages').push(message);
             input.value = '';
         }
-        
-        function updateOnlineUsers(users) {
-            if (!users) return;
-            
-            const onlineUsers = Object.values(users).filter(user => 
-                user.online && Date.now() - user.lastSeen < 40000
-            );
-            
-            document.getElementById('onlineCount').textContent = `${onlineUsers.length} онлайн`;
-            
-            // Обновляем список пользователей
-            const usersContainer = document.getElementById('usersContainer');
-            usersContainer.innerHTML = '';
-            
-            onlineUsers.forEach(user => {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'user-item';
-                userDiv.innerHTML = `
-                    <div class="user-status"></div>
-                    <span>${user.name}</span>
-                `;
-                usersContainer.appendChild(userDiv);
-            });
-        }
-        
-        function showUsers() {
-            const userList = document.getElementById('userList');
-            userList.style.display = userList.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        // Закрываем список пользователей при клике вне его
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.user-list') && !e.target.closest('.chat-header button')) {
-                document.getElementById('userList').style.display = 'none';
-            }
-        });
-        
-        // Ввод по Enter
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-        
-        // Вспомогательные функции
-        function generateId() {
-            return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString('ru-RU', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-        }
-        
-        // Обработка выхода
-        window.addEventListener('beforeunload', () => {
-            if (currentUser && usersRef) {
-                usersRef.child(currentUser.id).update({
-                    online: false,
-                    lastSeen: Date.now()
-                });
-            }
-        });
-        
-        // Если Firebase не настроен, показываем локальную версию
-        function checkFirebase() {
-            setTimeout(() => {
-                if (!firebase.apps.length) {
-                    document.getElementById('statusText').textContent = 'Локальный режим';
-                    alert('Firebase не настроен. Чат будет работать в локальном режиме.');
-                    enableLocalMode();
+
+        // Проверка подключения
+        database.ref('.info/connected').on('value', (snapshot) => {
+            const statusElement = document.getElementById('status');
+            if (snapshot.val() === true) {
+                console.log('✅ Подключено к Firebase');
+                if (currentUser) {
+                    statusElement.textContent = '✅ Подключено к my-github-messenger';
+                    statusElement.style.color = '#27AE60';
                 }
-            }, 1000);
-        }
-        
-        function enableLocalMode() {
-            // Простая локальная реализация без сервера
-            window.login = function() {
-                const username = document.getElementById('usernameInput').value.trim();
-                if (!username) return;
-                
-                currentUser = { id: 'local', name: username };
-                
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('chatScreen').style.display = 'flex';
-                document.getElementById('statusDot').classList.add('online');
-                document.getElementById('statusText').textContent = 'Локальный режим';
-                document.getElementById('onlineCount').textContent = '1 онлайн';
-                
-                // Простой чат в LocalStorage
-                setInterval(() => {
-                    const messages = JSON.parse(localStorage.getItem('chat_messages') || '[]');
-                    document.getElementById('messages').innerHTML = 
-                        '<div class="system-message">Локальный режим. Сообщения сохраняются только в этом браузере.</div>' +
-                        messages.map(msg => `
-                            <div class="message ${msg.userId === currentUser.id ? 'own' : ''}">
-                                <div class="message-sender">${msg.userName}</div>
-                                <div class="message-bubble">${msg.text}</div>
-                            </div>
-                        `).join('');
-                }, 1000);
-            };
-            
-            window.sendMessage = function() {
-                const input = document.getElementById('messageInput');
-                const text = input.value.trim();
-                if (!text || !currentUser) return;
-                
-                const messages = JSON.parse(localStorage.getItem('chat_messages') || '[]');
-                messages.push({
-                    userId: currentUser.id,
-                    userName: currentUser.name,
-                    text: text,
-                    timestamp: Date.now()
-                });
-                
-                localStorage.setItem('chat_messages', JSON.stringify(messages));
-                input.value = '';
-            };
-        }
-        
-        // Проверяем Firebase при загрузке
-        checkFirebase();
+            } else {
+                console.log('❌ Отключено от Firebase');
+                statusElement.textContent = '❌ Отключено';
+                statusElement.style.color = '#E74C3C';
+            }
+        });
+
+        console.log('🔥 Firebase проект: my-github-messenger');
+        console.log('🌍 Регион: europe-west1 (Бельгия)');
+        console.log('🔓 Режим: Тестовый (30 дней)');
     </script>
 </body>
 </html>
