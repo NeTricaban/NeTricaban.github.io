@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Messenger</title>
+    <title>Secure Messenger</title>
     <style>
         * {
             margin: 0;
@@ -13,83 +13,70 @@
         }
         
         body {
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .container {
-            width: 100%;
             max-width: 400px;
+            margin: 0 auto;
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
         .header {
             background: #2C3E50;
             color: white;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
         }
         
-        .status {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #BDC3C7;
+        .tabs {
+            display: flex;
+            background: #34495E;
         }
         
-        .login-screen {
-            padding: 40px 30px;
+        .tab {
+            flex: 1;
+            padding: 15px;
             text-align: center;
-        }
-        
-        .login-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #BDC3C7;
-            border-radius: 12px;
-            margin: 15px 0;
-            font-size: 16px;
-            text-align: center;
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: #27AE60;
             color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
+            border-bottom: 3px solid transparent;
         }
         
-        .chat-screen {
+        .tab.active {
+            border-bottom-color: #3498DB;
+            background: #2C3E50;
+        }
+        
+        .tab-content {
             display: none;
-            flex-direction: column;
             height: 500px;
+            flex-direction: column;
         }
         
+        .tab-content.active {
+            display: flex;
+        }
+        
+        /* Общий чат */
         .messages {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             background: #ECF0F1;
         }
         
         .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 10px;
             background: white;
             max-width: 80%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .message.own {
@@ -98,15 +85,17 @@
             margin-left: auto;
         }
         
-        .message-sender {
-            font-weight: bold;
+        .message-system {
+            text-align: center;
+            color: #7F8C8D;
+            font-style: italic;
+            margin: 10px 0;
             font-size: 12px;
-            margin-bottom: 5px;
         }
         
         .chat-input {
             display: flex;
-            padding: 20px;
+            padding: 15px;
             gap: 10px;
             background: white;
             border-top: 1px solid #BDC3C7;
@@ -114,7 +103,7 @@
         
         .message-input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 12px 15px;
             border: 1px solid #BDC3C7;
             border-radius: 20px;
             outline: none;
@@ -129,55 +118,249 @@
             cursor: pointer;
         }
         
-        .test-notice {
-            background: #FFF3CD;
-            color: #856404;
-            padding: 10px;
-            text-align: center;
+        /* Контакты */
+        .contacts-list {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .contact {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #E1E8ED;
+            cursor: pointer;
+        }
+        
+        .contact:hover {
+            background: #F8F9FA;
+        }
+        
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498DB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .contact-status {
             font-size: 12px;
-            border-bottom: 1px solid #FFEEBA;
+            color: #7F8C8D;
+        }
+        
+        .contact-online {
+            color: #27AE60;
+        }
+        
+        .contact-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .call-btn {
+            background: #27AE60;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Заявки */
+        .requests-list {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .request {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 1px solid #E1E8ED;
+        }
+        
+        .request-info {
+            margin-bottom: 10px;
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .accept-btn {
+            background: #27AE60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .decline-btn {
+            background: #E74C3C;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        /* Поиск */
+        .search-container {
+            padding: 15px;
+            background: white;
+            border-bottom: 1px solid #E1E8ED;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #BDC3C7;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .add-user-btn {
+            background: #3498DB;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        /* Логин */
+        .login-screen {
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #DDD;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #27AE60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2C3E50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="test-notice">
-            🔓 Тестовый режим • 30 дней
-        </div>
-        
         <div class="header">
-            <h2>💬 My GitHub Messenger</h2>
-            <div class="status" id="status">Отключено</div>
+            <h2>💬 Secure Messenger</h2>
+            <div id="status">Отключено</div>
         </div>
         
+        <!-- Экран логина -->
         <div class="login-screen" id="loginScreen">
-            <h3>Вход в чат</h3>
-            <p style="color: #7F8C8D; margin: 10px 0;">my-github-messenger</p>
-            
+            <h3>Вход в мессенджер</h3>
             <input type="text" id="usernameInput" class="login-input" placeholder="Ваше имя" value="Пользователь">
-            <button onclick="login()" class="login-btn">Войти в чат</button>
+            <button onclick="login()" class="login-btn">Войти</button>
         </div>
         
-        <div class="chat-screen" id="chatScreen">
-            <div class="messages" id="messages">
-                <div style="text-align: center; color: #7F8C8D; padding: 20px;">
-                    Добро пожаловать в чат!
+        <!-- Основной интерфейс -->
+        <div id="mainApp" class="hidden">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('chat')">💬 Чат</div>
+                <div class="tab" onclick="switchTab('contacts')">👥 Контакты</div>
+                <div class="tab" onclick="switchTab('requests')">📨 Заявки</div>
+            </div>
+            
+            <!-- Общий чат -->
+            <div class="tab-content active" id="chatTab">
+                <div class="messages" id="messages">
+                    <div class="message-system">Добро пожаловать в общий чат!</div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Напишите сообщение...">
+                    <button onclick="sendMessage()" class="send-btn">➤</button>
                 </div>
             </div>
             
-            <div class="chat-input">
-                <input type="text" id="messageInput" class="message-input" placeholder="Напишите сообщение...">
-                <button onclick="sendMessage()" class="send-btn">Отправить</button>
+            <!-- Контакты -->
+            <div class="tab-content" id="contactsTab">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Поиск пользователя...">
+                    <button onclick="sendRequest()" class="add-user-btn">📨 Отправить заявку</button>
+                </div>
+                <div class="contacts-list" id="contactsList">
+                    <!-- Список контактов -->
+                </div>
+            </div>
+            
+            <!-- Заявки -->
+            <div class="tab-content" id="requestsTab">
+                <div class="requests-list" id="requestsList">
+                    <!-- Список заявок -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK (старая версия для совместимости) -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     
     <script>
-        // ⚡ ТВОЙ КОНФИГ Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBPJHA9xBK-yO0giaxITea2ckejnuPvwos",
             authDomain: "my-github-messenger.firebaseapp.com",
@@ -188,52 +371,75 @@
             appId: "1:555869914189:web:2acc7882e5b24598f14804"
         };
 
-        // Инициализация Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
         let currentUser = null;
+        let contacts = [];
+        let requests = [];
 
         function login() {
             const username = document.getElementById('usernameInput').value.trim();
-            if (!username) {
-                alert('Введите ваше имя!');
-                return;
-            }
+            if (!username) return alert('Введите имя!');
             
             currentUser = {
-                id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                name: username
+                id: 'user_' + Date.now(),
+                name: username,
+                online: true,
+                lastSeen: Date.now()
             };
             
-            // Показываем чат
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('chatScreen').style.display = 'flex';
-            document.getElementById('status').textContent = '✅ Подключено к my-github-messenger';
-            document.getElementById('status').style.color = '#27AE60';
+            // Сохраняем пользователя
+            database.ref('users/' + currentUser.id).set({
+                name: currentUser.name,
+                online: true,
+                lastSeen: Date.now()
+            });
             
-            // Загружаем сообщения
+            // Показываем основной интерфейс
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('status').textContent = '✅ Онлайн';
+            
+            // Загружаем данные
             loadMessages();
+            loadContacts();
+            loadRequests();
             
-            // Слушаем новые сообщения
+            // Слушаем обновления
+            setupListeners();
+        }
+
+        function setupListeners() {
+            // Сообщения
             database.ref('messages').limitToLast(100).on('child_added', (snapshot) => {
                 const message = snapshot.val();
                 displayMessage(message);
             });
             
-            // Отправка по Enter
-            document.getElementById('messageInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
+            // Контакты
+            database.ref('users').on('value', (snapshot) => {
+                updateContacts(snapshot.val());
             });
+            
+            // Заявки
+            database.ref('requests').on('value', (snapshot) => {
+                updateRequests(snapshot.val());
+            });
+            
+            // Обновляем онлайн статус
+            setInterval(() => {
+                if (currentUser) {
+                    database.ref('users/' + currentUser.id).update({
+                        lastSeen: Date.now(),
+                        online: true
+                    });
+                }
+            }, 30000);
         }
 
         function loadMessages() {
             database.ref('messages').limitToLast(50).once('value', (snapshot) => {
-                const messagesContainer = document.getElementById('messages');
-                messagesContainer.innerHTML = '';
-                
                 const messages = snapshot.val();
                 if (messages) {
                     Object.values(messages).forEach(message => {
@@ -247,14 +453,21 @@
             const messagesContainer = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             
-            messageDiv.className = `message ${message.userId === currentUser?.id ? 'own' : ''}`;
-            messageDiv.innerHTML = `
-                <div class="message-sender">${message.userName}</div>
-                <div>${message.text}</div>
-            `;
+            if (message.type === 'system') {
+                messageDiv.className = 'message-system';
+                messageDiv.textContent = message.text;
+            } else {
+                messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : ''}`;
+                messageDiv.innerHTML = `
+                    <div style="font-weight: bold; font-size: 12px; margin-bottom: 5px;">
+                        ${message.userName}
+                    </div>
+                    <div>${message.text}</div>
+                `;
+            }
             
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messagesContainer.scrollTop = messages.scrollHeight;
         }
 
         function sendMessage() {
@@ -267,33 +480,181 @@
                 userId: currentUser.id,
                 userName: currentUser.name,
                 text: text,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                type: 'user'
             };
             
-            // Сохраняем в Firebase
             database.ref('messages').push(message);
             input.value = '';
         }
 
-        // Проверка подключения
-        database.ref('.info/connected').on('value', (snapshot) => {
-            const statusElement = document.getElementById('status');
-            if (snapshot.val() === true) {
-                console.log('✅ Подключено к Firebase');
-                if (currentUser) {
-                    statusElement.textContent = '✅ Подключено к my-github-messenger';
-                    statusElement.style.color = '#27AE60';
+        function loadContacts() {
+            database.ref('users').once('value', (snapshot) => {
+                updateContacts(snapshot.val());
+            });
+        }
+
+        function updateContacts(users) {
+            if (!users) return;
+            
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = '';
+            
+            Object.entries(users).forEach(([userId, user]) => {
+                if (userId === currentUser.id) return;
+                
+                const isOnline = user.online && (Date.now() - user.lastSeen < 40000);
+                
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact';
+                contactDiv.innerHTML = `
+                    <div class="contact-avatar">${user.name.charAt(0)}</div>
+                    <div class="contact-info">
+                        <div class="contact-name">${user.name}</div>
+                        <div class="contact-status ${isOnline ? 'contact-online' : ''}">
+                            ${isOnline ? '🟢 Онлайн' : '⚫ Офлайн'}
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="call-btn" onclick="startCall('${userId}')">📞</button>
+                    </div>
+                `;
+                
+                contactsList.appendChild(contactDiv);
+            });
+        }
+
+        function loadRequests() {
+            database.ref('requests').once('value', (snapshot) => {
+                updateRequests(snapshot.val());
+            });
+        }
+
+        function updateRequests(requestsData) {
+            if (!requestsData) return;
+            
+            const requestsList = document.getElementById('requestsList');
+            requestsList.innerHTML = '';
+            
+            Object.entries(requestsData).forEach(([requestId, request]) => {
+                if (request.toUserId === currentUser.id && request.status === 'pending') {
+                    const requestDiv = document.createElement('div');
+                    requestDiv.className = 'request';
+                    requestDiv.innerHTML = `
+                        <div class="request-info">
+                            <strong>${request.fromUserName}</strong> хочет добавить вас в контакты
+                        </div>
+                        <div class="request-actions">
+                            <button class="accept-btn" onclick="acceptRequest('${requestId}')">✅ Принять</button>
+                            <button class="decline-btn" onclick="declineRequest('${requestId}')">❌ Отклонить</button>
+                        </div>
+                    `;
+                    
+                    requestsList.appendChild(requestDiv);
                 }
-            } else {
-                console.log('❌ Отключено от Firebase');
-                statusElement.textContent = '❌ Отключено';
-                statusElement.style.color = '#E74C3C';
-            }
+            });
+        }
+
+        function sendRequest() {
+            const searchInput = document.getElementById('searchInput');
+            const username = searchInput.value.trim();
+            
+            if (!username) return alert('Введите имя пользователя!');
+            if (username === currentUser.name) return alert('Нельзя добавить самого себя!');
+            
+            // Ищем пользователя
+            database.ref('users').once('value', (snapshot) => {
+                const users = snapshot.val();
+                let foundUser = null;
+                
+                Object.entries(users).forEach(([userId, user]) => {
+                    if (user.name === username && userId !== currentUser.id) {
+                        foundUser = { id: userId, ...user };
+                    }
+                });
+                
+                if (foundUser) {
+                    // Отправляем заявку
+                    const request = {
+                        fromUserId: currentUser.id,
+                        fromUserName: currentUser.name,
+                        toUserId: foundUser.id,
+                        toUserName: foundUser.name,
+                        status: 'pending',
+                        timestamp: Date.now()
+                    };
+                    
+                    database.ref('requests').push(request);
+                    searchInput.value = '';
+                    showNotification(`Заявка отправлена пользователю ${username}`);
+                } else {
+                    alert('Пользователь не найден!');
+                }
+            });
+        }
+
+        function acceptRequest(requestId) {
+            database.ref('requests/' + requestId).update({
+                status: 'accepted'
+            });
+            showNotification('Заявка принята!');
+        }
+
+        function declineRequest(requestId) {
+            database.ref('requests/' + requestId).update({
+                status: 'declined'
+            });
+            showNotification('Заявка отклонена');
+        }
+
+        function startCall(userId) {
+            showNotification('📞 Звонок начинается... (симуляция)');
+            // Здесь будет реальная WebRTC логика для звонков
+        }
+
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Отправка по Enter
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendRequest();
         });
 
-        console.log('🔥 Firebase проект: my-github-messenger');
-        console.log('🌍 Регион: europe-west1 (Бельгия)');
-        console.log('🔓 Режим: Тестовый (30 дней)');
+        // При закрытии страницы
+        window.addEventListener('beforeunload', () => {
+            if (currentUser) {
+                database.ref('users/' + currentUser.id).update({
+                    online: false,
+                    lastSeen: Date.now()
+                });
+            }
+        });
     </script>
 </body>
 </html>
