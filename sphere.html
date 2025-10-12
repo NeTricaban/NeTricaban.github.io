@@ -147,7 +147,7 @@
             margin-bottom: 10px;
             outline: none;
             resize: none;
-            height: 40px;
+            height: 60px;
         }
         
         .post-actions {
@@ -221,12 +221,14 @@
             margin: 15px 0;
             border-radius: 8px;
             overflow: hidden;
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
         }
         
-        .post-media img, .post-media video {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
+        .media-placeholder {
+            font-size: 48px;
+            margin-bottom: 10px;
         }
         
         .audio-player {
@@ -354,17 +356,18 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
 
         .video-thumbnail {
             width: 100%;
             height: 140px;
-            background: #ddd;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: #666;
+            color: white;
         }
 
         .video-info {
@@ -386,6 +389,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            cursor: pointer;
         }
 
         .music-cover {
@@ -414,6 +418,7 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         /* Modal */
@@ -457,13 +462,35 @@
             color: #65676b;
         }
         
-        .file-upload {
-            border: 2px dashed #dddfe2;
-            border-radius: 8px;
-            padding: 40px 20px;
-            text-align: center;
+        .media-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin: 15px 0;
+        }
+        
+        .media-option {
+            padding: 20px;
+            border: 2px solid #dddfe2;
+            border-radius: 10px;
+            text-align: center;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .media-option:hover {
+            border-color: #1877f2;
+            background: #f0f2f5;
+        }
+        
+        .media-option.selected {
+            border-color: #1877f2;
+            background: #e7f3ff;
+        }
+        
+        .media-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
         }
         
         .hidden {
@@ -480,6 +507,22 @@
             font-size: 48px;
             margin-bottom: 15px;
         }
+
+        .btn-primary {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover {
+            background: #166fe5;
+        }
     </style>
 </head>
 <body>
@@ -488,7 +531,7 @@
         <div class="header-content">
             <div class="logo" onclick="switchSection('news')">Sphere</div>
             <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Поиск в Sphere">
+                <input type="text" class="search-input" placeholder="Поиск в Sphere" onkeyup="searchContent(this.value)">
             </div>
             <div class="user-menu">
                 <div class="avatar" id="userAvatar">U</div>
@@ -526,7 +569,6 @@
         <div class="main-content">
             <!-- Новости -->
             <div class="section active" id="newsSection">
-                <!-- Create Post -->
                 <div class="create-post">
                     <div class="post-header">
                         <div class="post-avatar" id="currentUserAvatar">U</div>
@@ -536,17 +578,14 @@
                     </div>
                     <textarea class="post-input" placeholder="Что у вас нового?" id="postText"></textarea>
                     <div class="post-actions">
-                        <button class="action-btn" onclick="showMediaModal('photo')">
-                            <span style="color: #45bd62;">📷</span> Фото
-                        </button>
-                        <button class="action-btn" onclick="showMediaModal('video')">
-                            <span style="color: #f5533d;">📹</span> Видео
-                        </button>
-                        <button class="action-btn" onclick="showMediaModal('audio')">
-                            <span style="color: #1877f2;">🎵</span> Аудио
+                        <button class="action-btn" onclick="showMediaModal()">
+                            <span style="color: #45bd62;">📷</span> Медиа
                         </button>
                         <button class="action-btn" onclick="showForumModal()">
                             <span style="color: #ff66cc;">💬</span> Форум
+                        </button>
+                        <button class="action-btn" onclick="publishPost('text')" style="background: #1877f2; color: white;">
+                            📝 Опубликовать
                         </button>
                     </div>
                 </div>
@@ -578,9 +617,19 @@
                 <div class="forum-section">
                     <div class="forum-title">📹 Видео</div>
                     <div class="video-grid" id="videosList">
-                        <div class="empty-state">
-                            <div class="icon">📹</div>
-                            <div>Пока нет видео</div>
+                        <div class="video-item" onclick="playMedia('video')">
+                            <div class="video-thumbnail">📹</div>
+                            <div class="video-info">
+                                <div style="font-weight: 600;">Демо видео 1</div>
+                                <div style="color: #65676b; font-size: 12px;">Просмотров: 1.2K</div>
+                            </div>
+                        </div>
+                        <div class="video-item" onclick="playMedia('video')">
+                            <div class="video-thumbnail">🎬</div>
+                            <div class="video-info">
+                                <div style="font-weight: 600;">Демо видео 2</div>
+                                <div style="color: #65676b; font-size: 12px;">Просмотров: 856</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -591,9 +640,21 @@
                 <div class="forum-section">
                     <div class="forum-title">🎵 Музыка</div>
                     <div class="music-list" id="musicList">
-                        <div class="empty-state">
-                            <div class="icon">🎵</div>
-                            <div>Пока нет музыки</div>
+                        <div class="music-item" onclick="playMedia('audio')">
+                            <div class="music-cover">🎵</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">Демо трек 1</div>
+                                <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
+                            </div>
+                            <div style="color: #65676b;">3:45</div>
+                        </div>
+                        <div class="music-item" onclick="playMedia('audio')">
+                            <div class="music-cover">🎶</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">Демо трек 2</div>
+                                <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
+                            </div>
+                            <div style="color: #65676b;">4:20</div>
                         </div>
                     </div>
                 </div>
@@ -603,6 +664,9 @@
             <div class="section" id="forumsSection">
                 <div class="forum-section">
                     <div class="forum-title">💬 Форумы</div>
+                    <button class="btn-primary" onclick="showForumModal()" style="margin-bottom: 20px;">
+                        + Создать тему
+                    </button>
                     <div class="forum-list" id="forumsList">
                         <!-- Форумы будут здесь -->
                     </div>
@@ -624,8 +688,11 @@
             <div class="sidebar-block">
                 <div class="sidebar-title">📹 Популярные видео</div>
                 <div id="popularVideos">
-                    <div style="color: #65676b; text-align: center; padding: 10px;">
-                        Нет видео
+                    <div class="video-item" onclick="switchSection('videos')">
+                        <div class="video-thumbnail" style="height: 80px; font-size: 24px;">📹</div>
+                        <div class="video-info" style="padding: 8px;">
+                            <div style="font-weight: 600; font-size: 12px;">Трендовое видео</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -633,8 +700,11 @@
             <div class="sidebar-block">
                 <div class="sidebar-title">🎵 Новая музыка</div>
                 <div id="newMusic">
-                    <div style="color: #65676b; text-align: center; padding: 10px;">
-                        Нет музыки
+                    <div class="music-item" onclick="switchSection('music')" style="padding: 10px;">
+                        <div class="music-cover" style="width: 40px; height: 40px; font-size: 16px;">🎵</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 12px;">Новый трек</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -645,16 +715,29 @@
     <div class="modal" id="mediaModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="mediaModalTitle">Добавить медиа</h3>
+                <h3>Добавить медиа</h3>
                 <button class="close-modal" onclick="closeModal('mediaModal')">×</button>
             </div>
-            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-                <div style="font-size: 48px; margin-bottom: 10px;" id="mediaIcon">📷</div>
-                <div id="mediaText">Нажмите для загрузки фото</div>
+            <div class="media-options">
+                <div class="media-option" onclick="selectMediaType('photo')">
+                    <div class="media-icon">📷</div>
+                    <div>Фото</div>
+                </div>
+                <div class="media-option" onclick="selectMediaType('video')">
+                    <div class="media-icon">📹</div>
+                    <div>Видео</div>
+                </div>
+                <div class="media-option" onclick="selectMediaType('audio')">
+                    <div class="media-icon">🎵</div>
+                    <div>Аудио</div>
+                </div>
+                <div class="media-option" onclick="selectMediaType('text')">
+                    <div class="media-icon">📝</div>
+                    <div>Только текст</div>
+                </div>
             </div>
-            <input type="file" id="fileInput" class="hidden" accept="">
-            <textarea class="post-input" placeholder="Добавьте описание..." id="mediaDescription" style="height: 80px; margin-top: 15px;"></textarea>
-            <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="publishPost()">
+            <textarea class="post-input" placeholder="Описание..." id="mediaDescription" style="height: 100px; margin-top: 15px;"></textarea>
+            <button class="btn-primary" onclick="publishPost()">
                 Опубликовать
             </button>
         </div>
@@ -668,7 +751,7 @@
             </div>
             <input type="text" class="post-input" placeholder="Название темы" id="forumTitle">
             <textarea class="post-input" placeholder="Описание темы" id="forumDescription" style="height: 100px;"></textarea>
-            <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="createForum()">
+            <button class="btn-primary" onclick="createForum()">
                 Создать тему
             </button>
         </div>
@@ -677,7 +760,6 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
     
     <script>
         const firebaseConfig = {
@@ -692,10 +774,9 @@
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const storage = firebase.storage();
         
         let currentUser = null;
-        let currentMediaType = 'photo';
+        let currentMediaType = 'text';
 
         // Инициализация
         function init() {
@@ -713,9 +794,10 @@
             
             loadPosts();
             loadForums();
-            loadVideos();
-            loadMusic();
             setupListeners();
+            
+            // Создаем демо данные
+            createDemoData();
         }
 
         function setupListeners() {
@@ -727,6 +809,37 @@
             database.ref('forums').limitToLast(20).on('child_added', (snapshot) => {
                 const forum = snapshot.val();
                 displayForum(forum);
+            });
+        }
+
+        function createDemoData() {
+            // Создаем демо форумы если их нет
+            database.ref('forums').once('value').then(snapshot => {
+                if (!snapshot.val()) {
+                    const demoForums = [
+                        {
+                            title: "🎮 Игры и развлечения",
+                            description: "Обсуждаем игры, кино и музыку",
+                            author: "Администратор",
+                            authorAvatar: "A"
+                        },
+                        {
+                            title: "💻 Технологии",
+                            description: "Все о технологиях и программировании",
+                            author: "Администратор", 
+                            authorAvatar: "A"
+                        }
+                    ];
+                    
+                    demoForums.forEach(forum => {
+                        database.ref('forums').push({
+                            ...forum,
+                            id: 'forum_' + Date.now(),
+                            timestamp: Date.now(),
+                            postsCount: 0
+                        });
+                    });
+                }
             });
         }
 
@@ -748,28 +861,20 @@
             event.target.closest('.nav-item').classList.add('active');
         }
 
-        function showMediaModal(type) {
+        function showMediaModal() {
+            currentMediaType = 'text';
+            document.getElementById('mediaModal').style.display = 'flex';
+            document.querySelectorAll('.media-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        }
+
+        function selectMediaType(type) {
             currentMediaType = type;
-            const modal = document.getElementById('mediaModal');
-            const icon = document.getElementById('mediaIcon');
-            const text = document.getElementById('mediaText');
-            const fileInput = document.getElementById('fileInput');
-            
-            if (type === 'photo') {
-                icon.textContent = '📷';
-                text.textContent = 'Нажмите для загрузки фото';
-                fileInput.accept = 'image/*';
-            } else if (type === 'video') {
-                icon.textContent = '📹';
-                text.textContent = 'Нажмите для загрузки видео';
-                fileInput.accept = 'video/*';
-            } else if (type === 'audio') {
-                icon.textContent = '🎵';
-                text.textContent = 'Нажмите для загрузки аудио';
-                fileInput.accept = 'audio/*';
-            }
-            
-            modal.style.display = 'flex';
+            document.querySelectorAll('.media-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.target.closest('.media-option').classList.add('selected');
         }
 
         function showForumModal() {
@@ -780,31 +885,13 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        async function publishPost() {
+        function publishPost() {
             const postText = document.getElementById('postText').value.trim() || 
                            document.getElementById('mediaDescription').value.trim();
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
             
-            if (!postText && !file) {
-                alert('Добавьте текст или медиа!');
+            if (!postText) {
+                alert('Добавьте текст поста!');
                 return;
-            }
-            
-            let mediaUrl = '';
-            
-            if (file) {
-                try {
-                    // Загружаем файл в Firebase Storage
-                    const storageRef = storage.ref();
-                    const fileRef = storageRef.child(`${currentMediaType}s/${Date.now()}_${file.name}`);
-                    await fileRef.put(file);
-                    mediaUrl = await fileRef.getDownloadURL();
-                } catch (error) {
-                    console.error('Ошибка загрузки файла:', error);
-                    alert('Ошибка загрузки файла');
-                    return;
-                }
             }
             
             const post = {
@@ -814,7 +901,6 @@
                 userAvatar: currentUser.avatar,
                 text: postText,
                 mediaType: currentMediaType,
-                mediaUrl: mediaUrl,
                 timestamp: Date.now(),
                 likes: 0,
                 comments: 0,
@@ -825,7 +911,6 @@
             
             document.getElementById('postText').value = '';
             document.getElementById('mediaDescription').value = '';
-            document.getElementById('fileInput').value = '';
             closeModal('mediaModal');
             
             alert('Пост опубликован!');
@@ -884,24 +969,21 @@
             
             const postDiv = document.createElement('div');
             postDiv.className = 'post';
-            postDiv.id = post.id;
             
             let mediaContent = '';
-            if (post.mediaUrl) {
-                if (post.mediaType === 'photo') {
-                    mediaContent = `<div class="post-media"><img src="${post.mediaUrl}" alt="Post image" style="width: 100%; border-radius: 8px;"></div>`;
-                } else if (post.mediaType === 'video') {
-                    mediaContent = `<div class="post-media"><video controls src="${post.mediaUrl}" style="width: 100%; border-radius: 8px;"></video></div>`;
-                } else if (post.mediaType === 'audio') {
-                    mediaContent = `
-                        <div class="audio-player">
-                            <audio controls style="width: 100%">
-                                <source src="${post.mediaUrl}" type="audio/mpeg">
-                                Ваш браузер не поддерживает аудио элемент.
-                            </audio>
-                        </div>
-                    `;
-                }
+            if (post.mediaType !== 'text') {
+                const mediaIcons = {
+                    'photo': '📷',
+                    'video': '📹', 
+                    'audio': '🎵'
+                };
+                
+                mediaContent = `
+                    <div class="post-media">
+                        <div class="media-placeholder">${mediaIcons[post.mediaType]}</div>
+                        <div>${post.mediaType === 'photo' ? 'Фотография' : post.mediaType === 'video' ? 'Видео' : 'Аудиозапись'}</div>
+                    </div>
+                `;
             }
             
             postDiv.innerHTML = `
@@ -912,11 +994,11 @@
                         <div class="post-time">${new Date(post.timestamp).toLocaleString()}</div>
                     </div>
                 </div>
-                ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
+                <div class="post-content">${post.text}</div>
                 ${mediaContent}
                 <div class="post-stats">
                     <span>❤️ ${post.likes || 0}</span>
-                    <span>💬 ${post.comments || 0} комментариев</span>
+                    <span>💬 ${post.comments || 0}</span>
                     <span>↗️ ${post.shares || 0}</span>
                 </div>
                 <div class="post-actions-bar">
@@ -958,33 +1040,14 @@
             forumsList.appendChild(forumDiv);
         }
 
-        function loadVideos() {
-            // Заглушка для видео
-            const videosList = document.getElementById('videosList');
-            videosList.innerHTML = `
-                <div class="video-item">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div style="font-weight: 600;">Пример видео</div>
-                        <div style="color: #65676b; font-size: 12px;">Просмотров: 1.2K</div>
-                    </div>
-                </div>
-            `;
+        function playMedia(type) {
+            alert(`Воспроизведение ${type === 'video' ? 'видео' : 'аудио'}...`);
         }
 
-        function loadMusic() {
-            // Заглушка для музыки
-            const musicList = document.getElementById('musicList');
-            musicList.innerHTML = `
-                <div class="music-item">
-                    <div class="music-cover">🎵</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600;">Пример трека</div>
-                        <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
-                    </div>
-                    <button class="action-btn">▶️</button>
-                </div>
-            `;
+        function searchContent(query) {
+            if (query.length > 2) {
+                alert(`Поиск: ${query}`);
+            }
         }
 
         function likePost(postId) {
@@ -1004,14 +1067,6 @@
 
         // Запуск приложения
         window.onload = init;
-
-        // Обработка Enter в поле ввода
-        document.getElementById('postText').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                publishPost();
-            }
-        });
     </script>
 </body>
 </html>
