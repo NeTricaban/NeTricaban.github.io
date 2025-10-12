@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sphere - Социальная сеть</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f0f2f5;
+            color: #1c1e21;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: #1877f2;
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            outline: none;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 100px);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e4e6eb;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .create-post {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .post-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dddfe2;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            outline: none;
+            resize: none;
+            height: 40px;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #dddfe2;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: #f0f2f5;
+        }
+        
+        /* Posts */
+        .post {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .post-author {
+            font-weight: 600;
+        }
+        
+        .post-time {
+            color: #65676b;
+            font-size: 12px;
+        }
+        
+        .post-content {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .post-media {
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .post-media img, .post-media video {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        .audio-player {
+            width: 100%;
+            padding: 15px;
+            background: #f0f2f5;
+            border-radius: 8px;
+        }
+        
+        .post-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dddfe2;
+            color: #65676b;
+            font-size: 14px;
+        }
+        
+        .post-actions-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 5px 0;
+        }
+        
+        .post-action {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .post-action:hover {
+            background: #f0f2f5;
+        }
+        
+        /* Right Sidebar */
+        .right-sidebar {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 100px);
+        }
+        
+        .sidebar-block {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dddfe2;
+        }
+        
+        .friend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+        
+        .friend-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1877f2;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Forums */
+        .forum-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .forum-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .forum-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .forum-item {
+            padding: 15px;
+            border: 1px solid #dddfe2;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .forum-item:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dddfe2;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #65676b;
+        }
+        
+        .file-upload {
+            border: 2px dashed #dddfe2;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">Sphere</div>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Поиск в Sphere">
+            </div>
+            <div class="user-menu">
+                <div class="avatar" id="userAvatar">U</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                <span>Новости</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👥</div>
+                <span>Друзья</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📹</div>
+                <span>Видео</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🎵</div>
+                <span>Музыка</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span>Форумы</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <span>Настройки</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Create Post -->
+            <div class="create-post">
+                <div class="post-header">
+                    <div class="post-avatar" id="currentUserAvatar">U</div>
+                    <div>
+                        <div class="post-author" id="currentUserName">Пользователь</div>
+                    </div>
+                </div>
+                <textarea class="post-input" placeholder="Что у вас нового?" id="postText"></textarea>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="showMediaModal('photo')">
+                        <span style="color: #45bd62;">📷</span> Фото
+                    </button>
+                    <button class="action-btn" onclick="showMediaModal('video')">
+                        <span style="color: #f5533d;">📹</span> Видео
+                    </button>
+                    <button class="action-btn" onclick="showMediaModal('audio')">
+                        <span style="color: #1877f2;">🎵</span> Аудио
+                    </button>
+                    <button class="action-btn" onclick="showForumModal()">
+                        <span style="color: #ff66cc;">💬</span> Форум
+                    </button>
+                </div>
+            </div>
+
+            <!-- Posts Feed -->
+            <div id="postsFeed">
+                <!-- Посты будут загружаться здесь -->
+            </div>
+
+            <!-- Forums Section -->
+            <div class="forum-section" id="forumsSection">
+                <div class="forum-title">Форумы</div>
+                <div class="forum-list" id="forumsList">
+                    <!-- Форумы будут здесь -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div class="sidebar-block">
+                <div class="sidebar-title">Друзья онлайн</div>
+                <div id="onlineFriends">
+                    <!-- Друзья онлайн -->
+                </div>
+            </div>
+            
+            <div class="sidebar-block">
+                <div class="sidebar-title">Популярные видео</div>
+                <div id="popularVideos">
+                    <!-- Видео -->
+                </div>
+            </div>
+            
+            <div class="sidebar-block">
+                <div class="sidebar-title">Новая музыка</div>
+                <div id="newMusic">
+                    <!-- Аудио -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="mediaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="mediaModalTitle">Добавить медиа</h3>
+                <button class="close-modal" onclick="closeModal('mediaModal')">×</button>
+            </div>
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 48px; margin-bottom: 10px;" id="mediaIcon">📷</div>
+                <div id="mediaText">Нажмите для загрузки фото</div>
+            </div>
+            <input type="file" id="fileInput" class="hidden" accept="">
+            <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="publishPost()">
+                Опубликовать
+            </button>
+        </div>
+    </div>
+
+    <div class="modal" id="forumModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создать тему в форуме</h3>
+                <button class="close-modal" onclick="closeModal('forumModal')">×</button>
+            </div>
+            <input type="text" class="post-input" placeholder="Название темы" id="forumTitle">
+            <textarea class="post-input" placeholder="Описание темы" id="forumDescription" style="height: 100px;"></textarea>
+            <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="createForum()">
+                Создать тему
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPJHA9xBK-yO0giaxITea2ckejnuPvwos",
+            authDomain: "my-github-messenger.firebaseapp.com",
+            databaseURL: "https://my-github-messenger-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "my-github-messenger",
+            storageBucket: "my-github-messenger.firebasestorage.app",
+            messagingSenderId: "555869914189",
+            appId: "1:555869914189:web:ef3ca1148aa3fd05f14804"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const storage = firebase.storage();
+        
+        let currentUser = null;
+        let currentMediaType = 'photo';
+
+        // Инициализация
+        function init() {
+            const username = prompt('Введите ваше имя:', 'Пользователь') || 'Пользователь';
+            
+            currentUser = {
+                id: 'user_' + Date.now(),
+                name: username,
+                avatar: username.charAt(0).toUpperCase()
+            };
+            
+            document.getElementById('currentUserName').textContent = username;
+            document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
+            document.getElementById('userAvatar').textContent = currentUser.avatar;
+            
+            loadPosts();
+            loadForums();
+            setupListeners();
+        }
+
+        function setupListeners() {
+            database.ref('posts').limitToLast(50).on('child_added', (snapshot) => {
+                const post = snapshot.val();
+                displayPost(post);
+            });
+            
+            database.ref('forums').limitToLast(20).on('child_added', (snapshot) => {
+                const forum = snapshot.val();
+                displayForum(forum);
+            });
+        }
+
+        function showMediaModal(type) {
+            currentMediaType = type;
+            const modal = document.getElementById('mediaModal');
+            const icon = document.getElementById('mediaIcon');
+            const text = document.getElementById('mediaText');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (type === 'photo') {
+                icon.textContent = '📷';
+                text.textContent = 'Нажмите для загрузки фото';
+                fileInput.accept = 'image/*';
+            } else if (type === 'video') {
+                icon.textContent = '📹';
+                text.textContent = 'Нажмите для загрузки видео';
+                fileInput.accept = 'video/*';
+            } else if (type === 'audio') {
+                icon.textContent = '🎵';
+                text.textContent = 'Нажмите для загрузки аудио';
+                fileInput.accept = 'audio/*';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function showForumModal() {
+            document.getElementById('forumModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function publishPost() {
+            const postText = document.getElementById('postText').value.trim();
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            let mediaUrl = '';
+            
+            if (file) {
+                // Загружаем файл в Firebase Storage
+                const storageRef = storage.ref();
+                const fileRef = storageRef.child(`${currentMediaType}s/${Date.now()}_${file.name}`);
+                await fileRef.put(file);
+                mediaUrl = await fileRef.getDownloadURL();
+            }
+            
+            const post = {
+                id: 'post_' + Date.now(),
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userAvatar: currentUser.avatar,
+                text: postText,
+                mediaType: currentMediaType,
+                mediaUrl: mediaUrl,
+                timestamp: Date.now(),
+                likes: 0,
+                comments: 0,
+                shares: 0
+            };
+            
+            database.ref('posts').push(post);
+            
+            document.getElementById('postText').value = '';
+            document.getElementById('fileInput').value = '';
+            closeModal('mediaModal');
+        }
+
+        function createForum() {
+            const title = document.getElementById('forumTitle').value.trim();
+            const description = document.getElementById('forumDescription').value.trim();
+            
+            if (!title) return alert('Введите название темы!');
+            
+            const forum = {
+                id: 'forum_' + Date.now(),
+                title: title,
+                description: description,
+                author: currentUser.name,
+                authorAvatar: currentUser.avatar,
+                timestamp: Date.now(),
+                postsCount: 0,
+                lastActivity: Date.now()
+            };
+            
+            database.ref('forums').push(forum);
+            
+            document.getElementById('forumTitle').value = '';
+            document.getElementById('forumDescription').value = '';
+            closeModal('forumModal');
+        }
+
+        function loadPosts() {
+            database.ref('posts').limitToLast(20).once('value', (snapshot) => {
+                const posts = snapshot.val();
+                if (posts) {
+                    Object.values(posts).forEach(post => {
+                        displayPost(post);
+                    });
+                }
+            });
+        }
+
+        function displayPost(post) {
+            const postsFeed = document.getElementById('postsFeed');
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
+            postDiv.id = post.id;
+            
+            let mediaContent = '';
+            if (post.mediaUrl) {
+                if (post.mediaType === 'photo') {
+                    mediaContent = `<div class="post-media"><img src="${post.mediaUrl}" alt="Post image"></div>`;
+                } else if (post.mediaType === 'video') {
+                    mediaContent = `<div class="post-media"><video controls src="${post.mediaUrl}"></video></div>`;
+                } else if (post.mediaType === 'audio') {
+                    mediaContent = `
+                        <div class="audio-player">
+                            <audio controls style="width: 100%">
+                                <source src="${post.mediaUrl}" type="audio/mpeg">
+                                Ваш браузер не поддерживает аудио элемент.
+                            </audio>
+                        </div>
+                    `;
+                }
+            }
+            
+            postDiv.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">${post.userAvatar}</div>
+                    <div>
+                        <div class="post-author">${post.userName}</div>
+                        <div class="post-time">${new Date(post.timestamp).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="post-content">${post.text}</div>
+                ${mediaContent}
+                <div class="post-stats">
+                    <span>❤️ ${post.likes || 0}</span>
+                    <span>💬 ${post.comments || 0} комментариев</span>
+                    <span>↗️ ${post.shares || 0}</span>
+                </div>
+                <div class="post-actions-bar">
+                    <button class="post-action" onclick="likePost('${post.id}')">❤️ Нравится</button>
+                    <button class="post-action" onclick="commentOnPost('${post.id}')">💬 Комментировать</button>
+                    <button class="post-action" onclick="sharePost('${post.id}')">↗️ Поделиться</button>
+                </div>
+            `;
+            
+            postsFeed.insertBefore(postDiv, postsFeed.firstChild);
+        }
+
+        function loadForums() {
+            database.ref('forums').limitToLast(10).once('value', (snapshot) => {
+                const forums = snapshot.val();
+                if (forums) {
+                    Object.values(forums).forEach(forum => {
+                        displayForum(forum);
+                    });
+                }
+            });
+        }
+
+        function displayForum(forum) {
+            const forumsList = document.getElementById('forumsList');
+            const forumDiv = document.createElement('div');
+            forumDiv.className = 'forum-item';
+            forumDiv.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 5px;">${forum.title}</div>
+                <div style="color: #65676b; font-size: 14px; margin-bottom: 8px;">${forum.description}</div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8a8d91;">
+                    <span>Автор: ${forum.author}</span>
+                    <span>Сообщений: ${forum.postsCount || 0}</span>
+                </div>
+            `;
+            forumsList.appendChild(forumDiv);
+        }
+
+        function likePost(postId) {
+            // Логика лайков
+            alert('Лайк добавлен!');
+        }
+
+        function commentOnPost(postId) {
+            const comment = prompt('Введите комментарий:');
+            if (comment) {
+                alert('Комментарий добавлен!');
+            }
+        }
+
+        function sharePost(postId) {
+            alert('Пост поделен!');
+        }
+
+        // Запуск приложения
+        window.onload = init;
+    </script>
+</body>
+</html>
