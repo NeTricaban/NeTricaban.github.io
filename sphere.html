@@ -48,6 +48,7 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
+            cursor: pointer;
         }
         
         .search-bar {
@@ -118,6 +119,18 @@
         }
         
         /* Main Content */
+        .main-content {
+            min-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+        
         .create-post {
             background: white;
             border-radius: 10px;
@@ -327,6 +340,81 @@
         .forum-item:hover {
             background: #f8f9fa;
         }
+
+        /* Video Section */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .video-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 140px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #666;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        /* Music Section */
+        .music-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .music-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .music-cover {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Friends Section */
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .friend-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
         
         /* Modal */
         .modal {
@@ -381,13 +469,24 @@
         .hidden {
             display: none;
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #65676b;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div class="header">
         <div class="header-content">
-            <div class="logo">Sphere</div>
+            <div class="logo" onclick="switchSection('news')">Sphere</div>
             <div class="search-bar">
                 <input type="text" class="search-input" placeholder="Поиск в Sphere">
             </div>
@@ -401,69 +500,112 @@
     <div class="container">
         <!-- Left Sidebar -->
         <div class="sidebar">
-            <div class="nav-item active">
+            <div class="nav-item active" onclick="switchSection('news')">
                 <div class="nav-icon">🏠</div>
                 <span>Новости</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchSection('friends')">
                 <div class="nav-icon">👥</div>
                 <span>Друзья</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchSection('videos')">
                 <div class="nav-icon">📹</div>
                 <span>Видео</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchSection('music')">
                 <div class="nav-icon">🎵</div>
                 <span>Музыка</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="switchSection('forums')">
                 <div class="nav-icon">💬</div>
                 <span>Форумы</span>
-            </div>
-            <div class="nav-item">
-                <div class="nav-icon">⚙️</div>
-                <span>Настройки</span>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Create Post -->
-            <div class="create-post">
-                <div class="post-header">
-                    <div class="post-avatar" id="currentUserAvatar">U</div>
-                    <div>
-                        <div class="post-author" id="currentUserName">Пользователь</div>
+            <!-- Новости -->
+            <div class="section active" id="newsSection">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <div class="post-header">
+                        <div class="post-avatar" id="currentUserAvatar">U</div>
+                        <div>
+                            <div class="post-author" id="currentUserName">Пользователь</div>
+                        </div>
+                    </div>
+                    <textarea class="post-input" placeholder="Что у вас нового?" id="postText"></textarea>
+                    <div class="post-actions">
+                        <button class="action-btn" onclick="showMediaModal('photo')">
+                            <span style="color: #45bd62;">📷</span> Фото
+                        </button>
+                        <button class="action-btn" onclick="showMediaModal('video')">
+                            <span style="color: #f5533d;">📹</span> Видео
+                        </button>
+                        <button class="action-btn" onclick="showMediaModal('audio')">
+                            <span style="color: #1877f2;">🎵</span> Аудио
+                        </button>
+                        <button class="action-btn" onclick="showForumModal()">
+                            <span style="color: #ff66cc;">💬</span> Форум
+                        </button>
                     </div>
                 </div>
-                <textarea class="post-input" placeholder="Что у вас нового?" id="postText"></textarea>
-                <div class="post-actions">
-                    <button class="action-btn" onclick="showMediaModal('photo')">
-                        <span style="color: #45bd62;">📷</span> Фото
-                    </button>
-                    <button class="action-btn" onclick="showMediaModal('video')">
-                        <span style="color: #f5533d;">📹</span> Видео
-                    </button>
-                    <button class="action-btn" onclick="showMediaModal('audio')">
-                        <span style="color: #1877f2;">🎵</span> Аудио
-                    </button>
-                    <button class="action-btn" onclick="showForumModal()">
-                        <span style="color: #ff66cc;">💬</span> Форум
-                    </button>
+
+                <!-- Posts Feed -->
+                <div id="postsFeed">
+                    <div class="empty-state">
+                        <div class="icon">📝</div>
+                        <div>Пока нет постов. Будьте первым!</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Posts Feed -->
-            <div id="postsFeed">
-                <!-- Посты будут загружаться здесь -->
+            <!-- Друзья -->
+            <div class="section" id="friendsSection">
+                <div class="forum-section">
+                    <div class="forum-title">👥 Друзья</div>
+                    <div class="friends-grid" id="friendsList">
+                        <div class="empty-state">
+                            <div class="icon">👥</div>
+                            <div>Здесь будут ваши друзья</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Forums Section -->
-            <div class="forum-section" id="forumsSection">
-                <div class="forum-title">Форумы</div>
-                <div class="forum-list" id="forumsList">
-                    <!-- Форумы будут здесь -->
+            <!-- Видео -->
+            <div class="section" id="videosSection">
+                <div class="forum-section">
+                    <div class="forum-title">📹 Видео</div>
+                    <div class="video-grid" id="videosList">
+                        <div class="empty-state">
+                            <div class="icon">📹</div>
+                            <div>Пока нет видео</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Музыка -->
+            <div class="section" id="musicSection">
+                <div class="forum-section">
+                    <div class="forum-title">🎵 Музыка</div>
+                    <div class="music-list" id="musicList">
+                        <div class="empty-state">
+                            <div class="icon">🎵</div>
+                            <div>Пока нет музыки</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Форумы -->
+            <div class="section" id="forumsSection">
+                <div class="forum-section">
+                    <div class="forum-title">💬 Форумы</div>
+                    <div class="forum-list" id="forumsList">
+                        <!-- Форумы будут здесь -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -471,23 +613,29 @@
         <!-- Right Sidebar -->
         <div class="right-sidebar">
             <div class="sidebar-block">
-                <div class="sidebar-title">Друзья онлайн</div>
+                <div class="sidebar-title">👥 Друзья онлайн</div>
                 <div id="onlineFriends">
-                    <!-- Друзья онлайн -->
+                    <div style="color: #65676b; text-align: center; padding: 10px;">
+                        Пока никто не онлайн
+                    </div>
                 </div>
             </div>
             
             <div class="sidebar-block">
-                <div class="sidebar-title">Популярные видео</div>
+                <div class="sidebar-title">📹 Популярные видео</div>
                 <div id="popularVideos">
-                    <!-- Видео -->
+                    <div style="color: #65676b; text-align: center; padding: 10px;">
+                        Нет видео
+                    </div>
                 </div>
             </div>
             
             <div class="sidebar-block">
-                <div class="sidebar-title">Новая музыка</div>
+                <div class="sidebar-title">🎵 Новая музыка</div>
                 <div id="newMusic">
-                    <!-- Аудио -->
+                    <div style="color: #65676b; text-align: center; padding: 10px;">
+                        Нет музыки
+                    </div>
                 </div>
             </div>
         </div>
@@ -505,6 +653,7 @@
                 <div id="mediaText">Нажмите для загрузки фото</div>
             </div>
             <input type="file" id="fileInput" class="hidden" accept="">
+            <textarea class="post-input" placeholder="Добавьте описание..." id="mediaDescription" style="height: 80px; margin-top: 15px;"></textarea>
             <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="publishPost()">
                 Опубликовать
             </button>
@@ -564,6 +713,8 @@
             
             loadPosts();
             loadForums();
+            loadVideos();
+            loadMusic();
             setupListeners();
         }
 
@@ -577,6 +728,24 @@
                 const forum = snapshot.val();
                 displayForum(forum);
             });
+        }
+
+        function switchSection(sectionName) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Убираем активный класс у всех пунктов меню
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Показываем выбранную секцию
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            
+            // Добавляем активный класс к выбранному пункту меню
+            event.target.closest('.nav-item').classList.add('active');
         }
 
         function showMediaModal(type) {
@@ -612,18 +781,30 @@
         }
 
         async function publishPost() {
-            const postText = document.getElementById('postText').value.trim();
+            const postText = document.getElementById('postText').value.trim() || 
+                           document.getElementById('mediaDescription').value.trim();
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
+            
+            if (!postText && !file) {
+                alert('Добавьте текст или медиа!');
+                return;
+            }
             
             let mediaUrl = '';
             
             if (file) {
-                // Загружаем файл в Firebase Storage
-                const storageRef = storage.ref();
-                const fileRef = storageRef.child(`${currentMediaType}s/${Date.now()}_${file.name}`);
-                await fileRef.put(file);
-                mediaUrl = await fileRef.getDownloadURL();
+                try {
+                    // Загружаем файл в Firebase Storage
+                    const storageRef = storage.ref();
+                    const fileRef = storageRef.child(`${currentMediaType}s/${Date.now()}_${file.name}`);
+                    await fileRef.put(file);
+                    mediaUrl = await fileRef.getDownloadURL();
+                } catch (error) {
+                    console.error('Ошибка загрузки файла:', error);
+                    alert('Ошибка загрузки файла');
+                    return;
+                }
             }
             
             const post = {
@@ -643,15 +824,21 @@
             database.ref('posts').push(post);
             
             document.getElementById('postText').value = '';
+            document.getElementById('mediaDescription').value = '';
             document.getElementById('fileInput').value = '';
             closeModal('mediaModal');
+            
+            alert('Пост опубликован!');
         }
 
         function createForum() {
             const title = document.getElementById('forumTitle').value.trim();
             const description = document.getElementById('forumDescription').value.trim();
             
-            if (!title) return alert('Введите название темы!');
+            if (!title) {
+                alert('Введите название темы!');
+                return;
+            }
             
             const forum = {
                 id: 'forum_' + Date.now(),
@@ -669,12 +856,17 @@
             document.getElementById('forumTitle').value = '';
             document.getElementById('forumDescription').value = '';
             closeModal('forumModal');
+            
+            alert('Тема форума создана!');
         }
 
         function loadPosts() {
             database.ref('posts').limitToLast(20).once('value', (snapshot) => {
                 const posts = snapshot.val();
-                if (posts) {
+                const postsFeed = document.getElementById('postsFeed');
+                
+                if (posts && Object.keys(posts).length > 0) {
+                    postsFeed.innerHTML = '';
                     Object.values(posts).forEach(post => {
                         displayPost(post);
                     });
@@ -684,6 +876,12 @@
 
         function displayPost(post) {
             const postsFeed = document.getElementById('postsFeed');
+            
+            // Убираем сообщение "нет постов" если оно есть
+            if (postsFeed.querySelector('.empty-state')) {
+                postsFeed.innerHTML = '';
+            }
+            
             const postDiv = document.createElement('div');
             postDiv.className = 'post';
             postDiv.id = post.id;
@@ -691,9 +889,9 @@
             let mediaContent = '';
             if (post.mediaUrl) {
                 if (post.mediaType === 'photo') {
-                    mediaContent = `<div class="post-media"><img src="${post.mediaUrl}" alt="Post image"></div>`;
+                    mediaContent = `<div class="post-media"><img src="${post.mediaUrl}" alt="Post image" style="width: 100%; border-radius: 8px;"></div>`;
                 } else if (post.mediaType === 'video') {
-                    mediaContent = `<div class="post-media"><video controls src="${post.mediaUrl}"></video></div>`;
+                    mediaContent = `<div class="post-media"><video controls src="${post.mediaUrl}" style="width: 100%; border-radius: 8px;"></video></div>`;
                 } else if (post.mediaType === 'audio') {
                     mediaContent = `
                         <div class="audio-player">
@@ -714,7 +912,7 @@
                         <div class="post-time">${new Date(post.timestamp).toLocaleString()}</div>
                     </div>
                 </div>
-                <div class="post-content">${post.text}</div>
+                ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
                 ${mediaContent}
                 <div class="post-stats">
                     <span>❤️ ${post.likes || 0}</span>
@@ -728,13 +926,16 @@
                 </div>
             `;
             
-            postsFeed.insertBefore(postDiv, postsFeed.firstChild);
+            postsFeed.appendChild(postDiv);
         }
 
         function loadForums() {
             database.ref('forums').limitToLast(10).once('value', (snapshot) => {
                 const forums = snapshot.val();
-                if (forums) {
+                const forumsList = document.getElementById('forumsList');
+                
+                if (forums && Object.keys(forums).length > 0) {
+                    forumsList.innerHTML = '';
                     Object.values(forums).forEach(forum => {
                         displayForum(forum);
                     });
@@ -757,8 +958,36 @@
             forumsList.appendChild(forumDiv);
         }
 
+        function loadVideos() {
+            // Заглушка для видео
+            const videosList = document.getElementById('videosList');
+            videosList.innerHTML = `
+                <div class="video-item">
+                    <div class="video-thumbnail">📹</div>
+                    <div class="video-info">
+                        <div style="font-weight: 600;">Пример видео</div>
+                        <div style="color: #65676b; font-size: 12px;">Просмотров: 1.2K</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadMusic() {
+            // Заглушка для музыки
+            const musicList = document.getElementById('musicList');
+            musicList.innerHTML = `
+                <div class="music-item">
+                    <div class="music-cover">🎵</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">Пример трека</div>
+                        <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
+                    </div>
+                    <button class="action-btn">▶️</button>
+                </div>
+            `;
+        }
+
         function likePost(postId) {
-            // Логика лайков
             alert('Лайк добавлен!');
         }
 
@@ -775,6 +1004,14 @@
 
         // Запуск приложения
         window.onload = init;
+
+        // Обработка Enter в поле ввода
+        document.getElementById('postText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                publishPost();
+            }
+        });
     </script>
 </body>
 </html>
