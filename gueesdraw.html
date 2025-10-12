@@ -3,305 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draw & Guess - Рисуй и Угадывай</title>
+    <title>Угадай слово - Draw & Guess</title>
     <style>
-        :root {
-            --primary: #6a11cb;
-            --secondary: #2575fc;
-            --success: #00b09b;
-            --warning: #ffd700;
-            --danger: #ff416c;
-            --dark: #2d3436;
-            --light: #f8f9fa;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: white;
+            padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #24292e;
+            color: white;
             padding: 20px;
+            text-align: center;
         }
-        
-        /* Лобби */
-        .lobby {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-        
-        .room-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .room-card {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .room-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Игровая комната */
-        .game-room {
-            display: none;
-        }
-        
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
+
         .game-area {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            height: 600px;
+            height: 700px;
         }
-        
-        /* Холст для рисования */
-        .drawing-area {
-            background: white;
-            border-radius: 15px;
-            position: relative;
+
+        .drawing-section {
+            padding: 20px;
+            border-right: 1px solid #e1e4e8;
         }
-        
-        #drawingCanvas {
-            border-radius: 15px;
-            cursor: crosshair;
-        }
-        
-        .tools {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(45, 52, 54, 0.8);
-            padding: 10px;
+
+        .canvas-container {
+            background: #f8f9fa;
             border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        
+
+        #drawingCanvas {
+            background: white;
+            border: 2px solid #e1e4e8;
+            border-radius: 10px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .tool-btn {
             width: 40px;
             height: 40px;
-            border: none;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            margin: 5px;
             cursor: pointer;
             font-size: 18px;
-        }
-        
-        /* Чат и игроки */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .players-list {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            flex: 1;
-        }
-        
-        .player {
             display: flex;
             align-items: center;
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            justify-content: center;
         }
-        
-        .player.active {
-            background: var(--success);
+
+        .tool-btn.active {
+            border-color: #007bff;
         }
-        
-        .player.drawing {
-            background: var(--warning);
-            color: var(--dark);
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            cursor: pointer;
         }
-        
-        .chat {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+
+        .color-btn.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+
+        .info-section {
             padding: 20px;
-            flex: 2;
+            background: #f6f8fa;
             display: flex;
             flex-direction: column;
         }
-        
+
+        .players-list {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e1e4e8;
+        }
+
+        .player {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .player.drawing {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+        }
+
+        .player.guessed {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+
+        .chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+        }
+
         .messages {
             flex: 1;
+            padding: 15px;
             overflow-y: auto;
-            margin-bottom: 15px;
+            max-height: 300px;
         }
-        
+
         .message {
-            margin: 8px 0;
+            margin-bottom: 10px;
             padding: 8px 12px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #f8f9fa;
         }
-        
+
         .message.system {
-            background: rgba(255, 65, 108, 0.3);
+            background: #fff3cd;
             text-align: center;
+            font-style: italic;
         }
-        
+
         .message.correct {
-            background: rgba(0, 176, 155, 0.3);
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
         }
-        
+
         .chat-input {
             display: flex;
-            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #e1e4e8;
         }
-        
+
         #messageInput {
             flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
         }
-        
-        button {
-            background: var(--success);
+
+        #messageInput:focus {
+            border-color: #007bff;
+        }
+
+        .send-btn {
+            background: #007bff;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-left: 10px;
             cursor: pointer;
-            transition: background 0.3s;
         }
-        
-        button:hover {
-            background: #009c7a;
+
+        .game-controls {
+            text-align: center;
+            margin: 20px 0;
         }
-        
-        /* Таймер */
-        .timer {
+
+        .word-display {
             font-size: 24px;
             font-weight: bold;
             text-align: center;
-            margin: 10px 0;
+            margin: 15px 0;
+            color: #28a745;
+            letter-spacing: 2px;
         }
-        
-        /* Слова для выбора */
-        .word-selection {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .word-options {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .word-option {
-            background: var(--warning);
-            color: var(--dark);
-            padding: 15px 25px;
-            border-radius: 10px;
-            cursor: pointer;
+
+        .timer {
+            font-size: 20px;
             font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            color: #dc3545;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .lobby {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .room-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .room-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e1e4e8;
+            cursor: pointer;
             transition: transform 0.2s;
         }
-        
-        .word-option:hover {
-            transform: scale(1.05);
+
+        .room-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Лобби -->
-        <div class="lobby" id="lobby">
-            <h1>🎨 Draw & Guess</h1>
-            <p>Рисуй и угадывай слова в реальном времени!</p>
-            
-            <div class="create-room">
-                <input type="text" id="roomName" placeholder="Название комнаты" style="padding: 10px; border-radius: 8px; border: none; margin-right: 10px;">
-                <button onclick="createRoom()">Создать комнату</button>
+        <header>
+            <h1>🎨 Угадай слово - Draw & Guess</h1>
+            <p>Один рисует - остальные угадывают!</p>
+        </header>
+
+        <div id="lobby" class="lobby">
+            <h2>Выберите комнату</h2>
+            <div class="game-controls">
+                <input type="text" id="roomName" placeholder="Название комнаты" style="padding: 10px; margin: 10px;">
+                <button onclick="createRoom()" class="send-btn">Создать комнату</button>
             </div>
-            
-            <h3 style="margin-top: 30px;">Доступные комнаты:</h3>
             <div class="room-list" id="roomList">
-                <!-- Список комнат будет заполняться через WebSocket -->
+                <!-- Комнаты будут здесь -->
             </div>
         </div>
-        
-        <!-- Игровая комната -->
-        <div class="game-room" id="gameRoom">
-            <div class="game-header">
-                <h2 id="roomTitle">Комната: </h2>
-                <div class="timer" id="timer">60</div>
-                <button onclick="leaveRoom()">Покинуть комнату</button>
-            </div>
-            
-            <div class="word-selection" id="wordSelection">
-                <h3>Выберите слово для рисования:</h3>
-                <div class="word-options" id="wordOptions">
-                    <!-- Варианты слов -->
-                </div>
-            </div>
-            
+
+        <div id="gameRoom" class="hidden">
             <div class="game-area">
-                <div class="drawing-area">
-                    <canvas id="drawingCanvas" width="800" height="600"></canvas>
+                <div class="drawing-section">
+                    <div class="timer" id="timer">Время: 60 сек</div>
+                    <div class="word-display" id="wordDisplay">***</div>
+                    
+                    <div class="canvas-container">
+                        <canvas id="drawingCanvas" width="700" height="400"></canvas>
+                    </div>
+                    
                     <div class="tools">
-                        <button class="tool-btn" onclick="changeColor('#000000')">⚫</button>
-                        <button class="tool-btn" onclick="changeColor('#ff0000')">🔴</button>
-                        <button class="tool-btn" onclick="changeColor('#0000ff')">🔵</button>
-                        <button class="tool-btn" onclick="changeColor('#00ff00')">🟢</button>
-                        <button class="tool-btn" onclick="changeBrushSize(2)">●</button>
-                        <button class="tool-btn" onclick="changeBrushSize(10)">◉</button>
-                        <button class="tool-btn" onclick="clearCanvas()">🗑️</button>
+                        <button class="tool-btn" onclick="changeTool('brush')">🖌️</button>
+                        <button class="tool-btn" onclick="changeTool('eraser')">🧹</button>
+                        <button class="color-btn" style="background: #000;" onclick="changeColor('#000')"></button>
+                        <button class="color-btn" style="background: #ff0000;" onclick="changeColor('#ff0000')"></button>
+                        <button class="color-btn" style="background: #0000ff;" onclick="changeColor('#0000ff')"></button>
+                        <button class="color-btn" style="background: #00ff00;" onclick="changeColor('#00ff00')"></button>
+                        <button class="tool-btn" onclick="clearCanvas()">🗑️ Очистить</button>
                     </div>
                 </div>
-                
-                <div class="sidebar">
+
+                <div class="info-section">
                     <div class="players-list">
-                        <h3>Игроки</h3>
+                        <h3>👥 Игроки</h3>
                         <div id="playersContainer">
                             <!-- Список игроков -->
                         </div>
                     </div>
-                    
+
                     <div class="chat">
                         <div class="messages" id="messages">
-                            <!-- Сообщения чата -->
+                            <div class="message system">Добро пожаловать в игру!</div>
                         </div>
                         <div class="chat-input">
-                            <input type="text" id="messageInput" placeholder="Введите сообщение...">
-                            <button onclick="sendMessage()">Отправить</button>
+                            <input type="text" id="messageInput" placeholder="Введите слово...">
+                            <button onclick="sendMessage()" class="send-btn">Отправить</button>
                         </div>
                     </div>
                 </div>
@@ -310,355 +309,329 @@
     </div>
 
     <script>
-        // WebSocket соединение
-        let socket = null;
+        // Игровые переменные
         let currentRoom = null;
+        let currentPlayer = null;
         let isDrawing = false;
         let lastX = 0;
         let lastY = 0;
         let currentColor = '#000000';
-        let brushSize = 2;
+        let currentTool = 'brush';
         let canvas, ctx;
 
-        // Инициализация при загрузке страницы
+        // Слова для игры
+        const wordList = [
+            'яблоко', 'машина', 'дом', 'кошка', 'собака', 'солнце', 'луна',
+            'книга', 'компьютер', 'телефон', 'дерево', 'цветок', 'море',
+            'горы', 'река', 'самолет', 'поезд', 'велосипед', 'часы'
+        ];
+
+        // Имитация сервера через LocalStorage + Polling
+        class GameServer {
+            constructor() {
+                this.rooms = JSON.parse(localStorage.getItem('drawguess_rooms')) || {};
+                this.pollInterval = null;
+                this.startPolling();
+            }
+
+            startPolling() {
+                this.pollInterval = setInterval(() => {
+                    this.checkForUpdates();
+                }, 1000);
+            }
+
+            checkForUpdates() {
+                const rooms = JSON.parse(localStorage.getItem('drawguess_rooms')) || {};
+                if (currentRoom && rooms[currentRoom]) {
+                    const updatedRoom = rooms[currentRoom];
+                    this.handleRoomUpdate(updatedRoom);
+                }
+            }
+
+            handleRoomUpdate(room) {
+                if (room.canvas) {
+                    this.redrawCanvas(room.canvas);
+                }
+                this.updatePlayers(room.players);
+                this.updateChat(room.messages);
+                this.updateGameState(room);
+            }
+
+            createRoom(name) {
+                const roomId = 'room_' + Date.now();
+                const room = {
+                    id: roomId,
+                    name: name,
+                    players: [],
+                    canvas: [],
+                    messages: [],
+                    currentWord: null,
+                    drawer: null,
+                    timeLeft: 60,
+                    gameState: 'waiting'
+                };
+                
+                this.rooms[roomId] = room;
+                this.saveRooms();
+                return roomId;
+            }
+
+            joinRoom(roomId, playerName) {
+                const room = this.rooms[roomId];
+                if (!room) return null;
+
+                const player = {
+                    id: 'player_' + Date.now(),
+                    name: playerName,
+                    score: 0,
+                    isDrawing: false
+                };
+
+                room.players.push(player);
+                
+                // Добавляем системное сообщение
+                room.messages.push({
+                    type: 'system',
+                    text: `${playerName} присоединился к игре`
+                });
+
+                this.saveRooms();
+                return player;
+            }
+
+            sendMessage(roomId, playerId, text) {
+                const room = this.rooms[roomId];
+                if (!room) return;
+
+                const player = room.players.find(p => p.id === playerId);
+                if (!player) return;
+
+                room.messages.push({
+                    player: player.name,
+                    text: text,
+                    type: 'chat'
+                });
+
+                // Проверка угаданного слова
+                if (room.gameState === 'drawing' && !player.isDrawing && room.currentWord) {
+                    if (text.toLowerCase() === room.currentWord.toLowerCase()) {
+                        player.score += 50;
+                        room.messages.push({
+                            type: 'system',
+                            text: `🎉 ${player.name} угадал слово "${room.currentWord}"!`
+                        });
+                    }
+                }
+
+                this.saveRooms();
+            }
+
+            draw(roomId, data) {
+                const room = this.rooms[roomId];
+                if (!room) return;
+
+                room.canvas.push(data);
+                this.saveRooms();
+            }
+
+            clearCanvas(roomId) {
+                const room = this.rooms[roomId];
+                if (!room) return;
+
+                room.canvas = [];
+                this.saveRooms();
+            }
+
+            saveRooms() {
+                localStorage.setItem('drawguess_rooms', JSON.stringify(this.rooms));
+            }
+
+            getRooms() {
+                return Object.values(this.rooms);
+            }
+
+            // Остальные методы для redrawCanvas, updatePlayers и т.д.
+            redrawCanvas(canvasData) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvasData.forEach(draw => {
+                    if (draw.type === 'line') {
+                        ctx.beginPath();
+                        ctx.moveTo(draw.startX, draw.startY);
+                        ctx.lineTo(draw.endX, draw.endY);
+                        ctx.strokeStyle = draw.color;
+                        ctx.lineWidth = draw.width;
+                        ctx.lineCap = 'round';
+                        ctx.stroke();
+                    }
+                });
+            }
+
+            updatePlayers(players) {
+                const container = document.getElementById('playersContainer');
+                container.innerHTML = '';
+                
+                players.forEach(player => {
+                    const playerEl = document.createElement('div');
+                    playerEl.className = `player ${player.isDrawing ? 'drawing' : ''}`;
+                    playerEl.innerHTML = `
+                        <span>${player.name}</span>
+                        <span>${player.score} очков</span>
+                    `;
+                    container.appendChild(playerEl);
+                });
+            }
+
+            updateChat(messages) {
+                const container = document.getElementById('messages');
+                if (container.children.length === messages.length) return;
+
+                container.innerHTML = '';
+                messages.forEach(msg => {
+                    const msgEl = document.createElement('div');
+                    msgEl.className = `message ${msg.type === 'system' ? 'system' : ''}`;
+                    msgEl.textContent = msg.player ? `${msg.player}: ${msg.text}` : msg.text;
+                    container.appendChild(msgEl);
+                });
+                container.scrollTop = container.scrollHeight;
+            }
+
+            updateGameState(room) {
+                document.getElementById('timer').textContent = `Время: ${room.timeLeft} сек`;
+                
+                if (room.drawer === currentPlayer?.id) {
+                    document.getElementById('wordDisplay').textContent = room.currentWord;
+                } else if (room.currentWord) {
+                    document.getElementById('wordDisplay').textContent = '***';
+                }
+            }
+        }
+
+        // Инициализация игры
         document.addEventListener('DOMContentLoaded', function() {
             canvas = document.getElementById('drawingCanvas');
             ctx = canvas.getContext('2d');
             setupCanvas();
-            connectWebSocket();
+            
+            window.gameServer = new GameServer();
+            updateRoomList();
         });
 
-        // Настройка WebSocket соединения
-        function connectWebSocket() {
-            // В реальном приложении здесь будет ваш домен
-            socket = new WebSocket('ws://localhost:8080');
-            
-            socket.onopen = function(event) {
-                console.log('WebSocket подключен');
-                updateLobby();
-            };
-            
-            socket.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                handleWebSocketMessage(data);
-            };
-            
-            socket.onclose = function(event) {
-                console.log('WebSocket отключен');
-                setTimeout(connectWebSocket, 3000);
-            };
-        }
-
-        // Обработка сообщений от сервера
-        function handleWebSocketMessage(data) {
-            switch(data.type) {
-                case 'room_list':
-                    updateRoomList(data.rooms);
-                    break;
-                case 'join_success':
-                    joinRoomSuccess(data);
-                    break;
-                case 'player_joined':
-                    playerJoined(data);
-                    break;
-                case 'player_left':
-                    playerLeft(data);
-                    break;
-                case 'start_drawing':
-                    startDrawing(data);
-                    break;
-                case 'draw_data':
-                    drawData(data);
-                    break;
-                case 'chat_message':
-                    receiveMessage(data);
-                    break;
-                case 'game_state':
-                    updateGameState(data);
-                    break;
-                case 'word_selection':
-                    showWordSelection(data.words);
-                    break;
-            }
-        }
-
-        // Создание комнаты
-        function createRoom() {
-            const roomName = document.getElementById('roomName').value || 'Комната ' + Date.now();
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'create_room',
-                    roomName: roomName,
-                    playerName: 'Игрок_' + Math.floor(Math.random() * 1000)
-                }));
-            }
-        }
-
-        // Вход в комнату
-        function joinRoom(roomId) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'join_room',
-                    roomId: roomId,
-                    playerName: 'Игрок_' + Math.floor(Math.random() * 1000)
-                }));
-            }
-        }
-
-        // Успешное подключение к комнате
-        function joinRoomSuccess(data) {
-            currentRoom = data.room;
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('gameRoom').style.display = 'block';
-            document.getElementById('roomTitle').textContent = 'Комната: ' + data.room.name;
-            updatePlayersList(data.room.players);
-        }
-
-        // Обновление списка игроков
-        function updatePlayersList(players) {
-            const container = document.getElementById('playersContainer');
-            container.innerHTML = '';
-            players.forEach(player => {
-                const playerEl = document.createElement('div');
-                playerEl.className = `player ${player.isDrawing ? 'drawing' : ''} ${player.isActive ? 'active' : ''}`;
-                playerEl.innerHTML = `
-                    <span>${player.name}</span>
-                    <span style="margin-left: auto;">${player.score} очков</span>
-                `;
-                container.appendChild(playerEl);
-            });
-        }
-
-        // Настройка холста
         function setupCanvas() {
             canvas.addEventListener('mousedown', startDraw);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', endDraw);
             canvas.addEventListener('mouseout', endDraw);
-            
-            // Для мобильных устройств
-            canvas.addEventListener('touchstart', handleTouch);
-            canvas.addEventListener('touchmove', handleTouch);
-            canvas.addEventListener('touchend', endDraw);
         }
 
-        function handleTouch(event) {
-            event.preventDefault();
-            const touch = event.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        function startDraw(event) {
-            if (!isCurrentPlayerDrawing()) return;
-            
+        function startDraw(e) {
             isDrawing = true;
             const rect = canvas.getBoundingClientRect();
-            lastX = event.clientX - rect.left;
-            lastY = event.clientY - rect.top;
-            
-            // Отправка начала рисования
-            sendDrawData('start', lastX, lastY);
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
         }
 
-        function draw(event) {
-            if (!isDrawing || !isCurrentPlayerDrawing()) return;
+        function draw(e) {
+            if (!isDrawing) return;
             
             const rect = canvas.getBoundingClientRect();
-            const currentX = event.clientX - rect.left;
-            const currentY = event.clientY - rect.top;
-            
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(currentX, currentY);
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = brushSize;
+            ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+            ctx.lineWidth = currentTool === 'eraser' ? 20 : 5;
             ctx.lineCap = 'round';
             ctx.stroke();
-            
-            // Отправка данных рисования
-            sendDrawData('draw', currentX, currentY);
-            
+
+            // Сохраняем в "сервер"
+            if (currentRoom) {
+                gameServer.draw(currentRoom, {
+                    type: 'line',
+                    startX: lastX,
+                    startY: lastY,
+                    endX: currentX,
+                    endY: currentY,
+                    color: currentTool === 'eraser' ? '#ffffff' : currentColor,
+                    width: currentTool === 'eraser' ? 20 : 5
+                });
+            }
+
             lastX = currentX;
             lastY = currentY;
         }
 
         function endDraw() {
-            if (!isDrawing) return;
             isDrawing = false;
-            sendDrawData('end');
         }
 
-        function sendDrawData(action, x, y) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'draw',
-                    roomId: currentRoom.id,
-                    action: action,
-                    x: x,
-                    y: y,
-                    color: currentColor,
-                    brushSize: brushSize
-                }));
-            }
+        function changeTool(tool) {
+            currentTool = tool;
         }
 
-        function drawData(data) {
-            if (data.action === 'start') {
-                ctx.beginPath();
-                ctx.moveTo(data.x, data.y);
-            } else if (data.action === 'draw') {
-                ctx.lineTo(data.x, data.y);
-                ctx.strokeStyle = data.color;
-                ctx.lineWidth = data.brushSize;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-            }
-        }
-
-        // Инструменты рисования
         function changeColor(color) {
             currentColor = color;
-        }
-
-        function changeBrushSize(size) {
-            brushSize = size;
+            currentTool = 'brush';
         }
 
         function clearCanvas() {
-            if (isCurrentPlayerDrawing()) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if (socket) {
-                    socket.send(JSON.stringify({
-                        type: 'clear_canvas',
-                        roomId: currentRoom.id
-                    }));
-                }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (currentRoom) {
+                gameServer.clearCanvas(currentRoom);
             }
         }
 
-        function isCurrentPlayerDrawing() {
-            // В реальном приложении здесь будет проверка роли игрока
-            return true;
+        function createRoom() {
+            const roomName = document.getElementById('roomName').value || 'Комната ' + Date.now();
+            const roomId = gameServer.createRoom(roomName);
+            
+            const playerName = prompt('Введите ваше имя:', 'Игрок') || 'Игрок';
+            currentPlayer = gameServer.joinRoom(roomId, playerName);
+            currentRoom = roomId;
+
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('gameRoom').classList.remove('hidden');
         }
 
-        // Чат
+        function joinRoom(roomId) {
+            const playerName = prompt('Введите ваше имя:', 'Игрок') || 'Игрок';
+            currentPlayer = gameServer.joinRoom(roomId, playerName);
+            currentRoom = roomId;
+
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('gameRoom').classList.remove('hidden');
+        }
+
         function sendMessage() {
             const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+            const text = input.value.trim();
             
-            if (message && socket) {
-                socket.send(JSON.stringify({
-                    type: 'chat',
-                    roomId: currentRoom.id,
-                    message: message
-                }));
+            if (text && currentRoom && currentPlayer) {
+                gameServer.sendMessage(currentRoom, currentPlayer.id, text);
                 input.value = '';
             }
         }
 
-        function receiveMessage(data) {
-            const messages = document.getElementById('messages');
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${data.isSystem ? 'system' : ''} ${data.isCorrect ? 'correct' : ''}`;
-            messageEl.textContent = data.player ? `${data.player}: ${data.message}` : data.message;
-            messages.appendChild(messageEl);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        // Вспомогательные функции
-        function updateLobby() {
-            if (socket) {
-                socket.send(JSON.stringify({ type: 'get_rooms' }));
-            }
-        }
-
-        function updateRoomList(rooms) {
-            const roomList = document.getElementById('roomList');
-            roomList.innerHTML = '';
+        function updateRoomList() {
+            const rooms = gameServer.getRooms();
+            const container = document.getElementById('roomList');
             
+            container.innerHTML = '';
             rooms.forEach(room => {
                 const roomCard = document.createElement('div');
                 roomCard.className = 'room-card';
                 roomCard.innerHTML = `
-                    <h4>${room.name}</h4>
-                    <p>Игроков: ${room.players.length}/${room.maxPlayers}</p>
+                    <h3>${room.name}</h3>
+                    <p>Игроков: ${room.players.length}</p>
                 `;
                 roomCard.onclick = () => joinRoom(room.id);
-                roomList.appendChild(roomCard);
+                container.appendChild(roomCard);
             });
         }
 
-        function leaveRoom() {
-            if (socket && currentRoom) {
-                socket.send(JSON.stringify({
-                    type: 'leave_room',
-                    roomId: currentRoom.id
-                }));
-            }
-            document.getElementById('lobby').style.display = 'block';
-            document.getElementById('gameRoom').style.display = 'none';
-            currentRoom = null;
-            updateLobby();
-        }
-
-        function showWordSelection(words) {
-            const container = document.getElementById('wordOptions');
-            container.innerHTML = '';
-            
-            words.forEach(word => {
-                const wordEl = document.createElement('div');
-                wordEl.className = 'word-option';
-                wordEl.textContent = word;
-                wordEl.onclick = () => selectWord(word);
-                container.appendChild(wordEl);
-            });
-            
-            document.getElementById('wordSelection').style.display = 'block';
-        }
-
-        function selectWord(word) {
-            if (socket) {
-                socket.send(JSON.stringify({
-                    type: 'word_selected',
-                    roomId: currentRoom.id,
-                    word: word
-                }));
-            }
-            document.getElementById('wordSelection').style.display = 'none';
-        }
-
-        // Заглушки для событий (в реальном приложении будут реализованы)
-        function playerJoined(data) {
-            addMessage(`${data.playerName} присоединился к игре`, true);
-            updatePlayersList(data.players);
-        }
-
-        function playerLeft(data) {
-            addMessage(`${data.playerName} покинул игру`, true);
-            updatePlayersList(data.players);
-        }
-
-        function startDrawing(data) {
-            addMessage(`${data.playerName} начинает рисовать!`, true);
-        }
-
-        function updateGameState(data) {
-            document.getElementById('timer').textContent = data.timeLeft;
-            updatePlayersList(data.players);
-        }
-
-        function addMessage(message, isSystem = false) {
-            const messages = document.getElementById('messages');
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${isSystem ? 'system' : ''}`;
-            messageEl.textContent = message;
-            messages.appendChild(messageEl);
-            messages.scrollTop = messages.scrollHeight;
-        }
+        // Обновляем список комнат каждые 3 секунды
+        setInterval(updateRoomList, 3000);
     </script>
 </body>
 </html>
