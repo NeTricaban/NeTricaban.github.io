@@ -221,14 +221,13 @@
             margin: 15px 0;
             border-radius: 8px;
             overflow: hidden;
-            background: #f8f9fa;
-            padding: 20px;
-            text-align: center;
         }
         
-        .media-placeholder {
-            font-size: 48px;
-            margin-bottom: 10px;
+        .post-media img, .post-media video {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
         }
         
         .audio-player {
@@ -236,6 +235,10 @@
             padding: 15px;
             background: #f0f2f5;
             border-radius: 8px;
+        }
+        
+        .audio-player audio {
+            width: 100%;
         }
         
         .post-stats {
@@ -288,27 +291,6 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #dddfe2;
-        }
-        
-        .friend-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            cursor: pointer;
-        }
-        
-        .friend-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #1877f2;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
         }
         
         /* Forums */
@@ -462,35 +444,53 @@
             color: #65676b;
         }
         
-        .media-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .media-option {
-            padding: 20px;
-            border: 2px solid #dddfe2;
-            border-radius: 10px;
+        .file-upload {
+            border: 2px dashed #dddfe2;
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
+            margin: 15px 0;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: border-color 0.3s;
         }
         
-        .media-option:hover {
+        .file-upload:hover {
+            border-color: #1877f2;
+        }
+        
+        .file-upload.dragover {
             border-color: #1877f2;
             background: #f0f2f5;
         }
         
-        .media-option.selected {
-            border-color: #1877f2;
-            background: #e7f3ff;
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #65676b;
         }
         
-        .media-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
+        .file-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #dddfe2;
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #1877f2;
+            width: 0%;
+            transition: width 0.3s;
         }
         
         .hidden {
@@ -523,6 +523,16 @@
         .btn-primary:hover {
             background: #166fe5;
         }
+
+        .btn-primary:disabled {
+            background: #dddfe2;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -531,7 +541,7 @@
         <div class="header-content">
             <div class="logo" onclick="switchSection('news')">Sphere</div>
             <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Поиск в Sphere" onkeyup="searchContent(this.value)">
+                <input type="text" class="search-input" placeholder="Поиск в Sphere">
             </div>
             <div class="user-menu">
                 <div class="avatar" id="userAvatar">U</div>
@@ -578,13 +588,13 @@
                     </div>
                     <textarea class="post-input" placeholder="Что у вас нового?" id="postText"></textarea>
                     <div class="post-actions">
-                        <button class="action-btn" onclick="showMediaModal()">
-                            <span style="color: #45bd62;">📷</span> Медиа
+                        <button class="action-btn" onclick="showMediaModal('audio')">
+                            <span style="color: #1877f2;">🎵</span> Загрузить аудио
                         </button>
                         <button class="action-btn" onclick="showForumModal()">
                             <span style="color: #ff66cc;">💬</span> Форум
                         </button>
-                        <button class="action-btn" onclick="publishPost('text')" style="background: #1877f2; color: white;">
+                        <button class="action-btn" onclick="publishTextPost()" style="background: #1877f2; color: white;">
                             📝 Опубликовать
                         </button>
                     </div>
@@ -599,63 +609,39 @@
                 </div>
             </div>
 
-            <!-- Друзья -->
-            <div class="section" id="friendsSection">
-                <div class="forum-section">
-                    <div class="forum-title">👥 Друзья</div>
-                    <div class="friends-grid" id="friendsList">
-                        <div class="empty-state">
-                            <div class="icon">👥</div>
-                            <div>Здесь будут ваши друзья</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Видео -->
-            <div class="section" id="videosSection">
-                <div class="forum-section">
-                    <div class="forum-title">📹 Видео</div>
-                    <div class="video-grid" id="videosList">
-                        <div class="video-item" onclick="playMedia('video')">
-                            <div class="video-thumbnail">📹</div>
-                            <div class="video-info">
-                                <div style="font-weight: 600;">Демо видео 1</div>
-                                <div style="color: #65676b; font-size: 12px;">Просмотров: 1.2K</div>
-                            </div>
-                        </div>
-                        <div class="video-item" onclick="playMedia('video')">
-                            <div class="video-thumbnail">🎬</div>
-                            <div class="video-info">
-                                <div style="font-weight: 600;">Демо видео 2</div>
-                                <div style="color: #65676b; font-size: 12px;">Просмотров: 856</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Музыка -->
             <div class="section" id="musicSection">
                 <div class="forum-section">
                     <div class="forum-title">🎵 Музыка</div>
+                    <button class="btn-primary" onclick="showMediaModal('audio')" style="margin-bottom: 20px;">
+                        🎵 Загрузить аудио
+                    </button>
                     <div class="music-list" id="musicList">
-                        <div class="music-item" onclick="playMedia('audio')">
-                            <div class="music-cover">🎵</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600;">Демо трек 1</div>
-                                <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
-                            </div>
-                            <div style="color: #65676b;">3:45</div>
+                        <div class="empty-state">
+                            <div class="icon">🎵</div>
+                            <div>Пока нет музыки</div>
                         </div>
-                        <div class="music-item" onclick="playMedia('audio')">
-                            <div class="music-cover">🎶</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600;">Демо трек 2</div>
-                                <div style="color: #65676b; font-size: 12px;">Исполнитель</div>
-                            </div>
-                            <div style="color: #65676b;">4:20</div>
-                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Остальные разделы... -->
+            <div class="section" id="friendsSection">
+                <div class="forum-section">
+                    <div class="forum-title">👥 Друзья</div>
+                    <div class="empty-state">
+                        <div class="icon">👥</div>
+                        <div>Раздел в разработке</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="videosSection">
+                <div class="forum-section">
+                    <div class="forum-title">📹 Видео</div>
+                    <div class="empty-state">
+                        <div class="icon">📹</div>
+                        <div>Раздел в разработке</div>
                     </div>
                 </div>
             </div>
@@ -677,34 +663,10 @@
         <!-- Right Sidebar -->
         <div class="right-sidebar">
             <div class="sidebar-block">
-                <div class="sidebar-title">👥 Друзья онлайн</div>
-                <div id="onlineFriends">
+                <div class="sidebar-title">🎵 Недавняя музыка</div>
+                <div id="recentMusic">
                     <div style="color: #65676b; text-align: center; padding: 10px;">
-                        Пока никто не онлайн
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar-block">
-                <div class="sidebar-title">📹 Популярные видео</div>
-                <div id="popularVideos">
-                    <div class="video-item" onclick="switchSection('videos')">
-                        <div class="video-thumbnail" style="height: 80px; font-size: 24px;">📹</div>
-                        <div class="video-info" style="padding: 8px;">
-                            <div style="font-weight: 600; font-size: 12px;">Трендовое видео</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar-block">
-                <div class="sidebar-title">🎵 Новая музыка</div>
-                <div id="newMusic">
-                    <div class="music-item" onclick="switchSection('music')" style="padding: 10px;">
-                        <div class="music-cover" style="width: 40px; height: 40px; font-size: 16px;">🎵</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 12px;">Новый трек</div>
-                        </div>
+                        Нет музыки
                     </div>
                 </div>
             </div>
@@ -715,30 +677,34 @@
     <div class="modal" id="mediaModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Добавить медиа</h3>
+                <h3>🎵 Загрузить аудио</h3>
                 <button class="close-modal" onclick="closeModal('mediaModal')">×</button>
             </div>
-            <div class="media-options">
-                <div class="media-option" onclick="selectMediaType('photo')">
-                    <div class="media-icon">📷</div>
-                    <div>Фото</div>
-                </div>
-                <div class="media-option" onclick="selectMediaType('video')">
-                    <div class="media-icon">📹</div>
-                    <div>Видео</div>
-                </div>
-                <div class="media-option" onclick="selectMediaType('audio')">
-                    <div class="media-icon">🎵</div>
-                    <div>Аудио</div>
-                </div>
-                <div class="media-option" onclick="selectMediaType('text')">
-                    <div class="media-icon">📝</div>
-                    <div>Только текст</div>
+            
+            <div class="file-upload" id="dropZone" onclick="document.getElementById('audioInput').click()">
+                <div class="upload-icon">🎵</div>
+                <div>Нажмите для выбора аудиофайла</div>
+                <div style="font-size: 12px; color: #65676b; margin-top: 5px;">
+                    Поддерживаемые форматы: MP3, WAV, OGG
                 </div>
             </div>
-            <textarea class="post-input" placeholder="Описание..." id="mediaDescription" style="height: 100px; margin-top: 15px;"></textarea>
-            <button class="btn-primary" onclick="publishPost()">
-                Опубликовать
+            
+            <input type="file" id="audioInput" class="hidden" accept="audio/*">
+            
+            <div class="file-info" id="fileInfo" style="display: none;">
+                <strong>Выбранный файл:</strong>
+                <div id="fileName"></div>
+                <div id="fileSize"></div>
+            </div>
+            
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress" id="progress"></div>
+            </div>
+            
+            <textarea class="post-input" placeholder="Описание аудио..." id="audioDescription" style="height: 80px; margin-top: 15px;"></textarea>
+            
+            <button class="btn-primary" id="uploadBtn" onclick="uploadAudio()" disabled>
+                Загрузить аудио
             </button>
         </div>
     </div>
@@ -760,23 +726,27 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
     
     <script>
+        // 🔥 ЗАМЕНИ ЭТОТ КОНФИГ НА СВОЙ НОВЫЙ FIREBASE ПРОЕКТ
         const firebaseConfig = {
             apiKey: "AIzaSyBPJHA9xBK-yO0giaxITea2ckejnuPvwos",
             authDomain: "my-github-messenger.firebaseapp.com",
-            databaseURL: "https://my-github-messenger-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "my-github-messenger",
-            storageBucket: "my-github-messenger.firebasestorage.app",
+            databaseURL: "https://my-github-messenger-default-rtdb.europe-west1.firebasedatabase.app,
+            projectId: "my-github-messenger.firebasestorage.app",
+            storageBucket: "YOUR_PROJECT.appspot.com",
             messagingSenderId: "555869914189",
             appId: "1:555869914189:web:ef3ca1148aa3fd05f14804"
         };
 
+        // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const storage = firebase.storage();
         
         let currentUser = null;
-        let currentMediaType = 'text';
+        let selectedAudioFile = null;
 
         // Инициализация
         function init() {
@@ -792,18 +762,31 @@
             document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
             document.getElementById('userAvatar').textContent = currentUser.avatar;
             
+            setupEventListeners();
             loadPosts();
             loadForums();
-            setupListeners();
+            loadMusic();
             
-            // Создаем демо данные
             createDemoData();
         }
 
-        function setupListeners() {
+        function setupEventListeners() {
+            // Аудио input
+            document.getElementById('audioInput').addEventListener('change', handleAudioSelect);
+            
+            // Drag and drop
+            const dropZone = document.getElementById('dropZone');
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+            
+            // Слушатели базы данных
             database.ref('posts').limitToLast(50).on('child_added', (snapshot) => {
                 const post = snapshot.val();
-                displayPost(post);
+                if (post.mediaType === 'audio') {
+                    displayPost(post);
+                    updateMusicList(post);
+                }
             });
             
             database.ref('forums').limitToLast(20).on('child_added', (snapshot) => {
@@ -812,69 +795,152 @@
             });
         }
 
-        function createDemoData() {
-            // Создаем демо форумы если их нет
-            database.ref('forums').once('value').then(snapshot => {
-                if (!snapshot.val()) {
-                    const demoForums = [
-                        {
-                            title: "🎮 Игры и развлечения",
-                            description: "Обсуждаем игры, кино и музыку",
-                            author: "Администратор",
-                            authorAvatar: "A"
-                        },
-                        {
-                            title: "💻 Технологии",
-                            description: "Все о технологиях и программировании",
-                            author: "Администратор", 
-                            authorAvatar: "A"
-                        }
-                    ];
-                    
-                    demoForums.forEach(forum => {
-                        database.ref('forums').push({
-                            ...forum,
-                            id: 'forum_' + Date.now(),
-                            timestamp: Date.now(),
-                            postsCount: 0
-                        });
-                    });
+        function handleAudioSelect(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('audio/')) {
+                selectedAudioFile = file;
+                showFileInfo(file);
+                document.getElementById('uploadBtn').disabled = false;
+            } else {
+                alert('Пожалуйста, выберите аудиофайл!');
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('audio/')) {
+                    selectedAudioFile = file;
+                    showFileInfo(file);
+                    document.getElementById('uploadBtn').disabled = false;
+                } else {
+                    alert('Пожалуйста, перетащите аудиофайл!');
                 }
-            });
+            }
+        }
+
+        function showFileInfo(file) {
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+            document.getElementById('fileInfo').style.display = 'block';
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = `Размер: ${fileSize} MB`;
+        }
+
+        async function uploadAudio() {
+            if (!selectedAudioFile) {
+                alert('Сначала выберите аудиофайл!');
+                return;
+            }
+
+            const description = document.getElementById('audioDescription').value.trim();
+            if (!description) {
+                alert('Добавьте описание к аудио!');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Загрузка...';
+            progressBar.style.display = 'block';
+
+            try {
+                // Загружаем аудио в Firebase Storage
+                const storageRef = storage.ref();
+                const audioRef = storageRef.child(`audio/${Date.now()}_${selectedAudioFile.name}`);
+                
+                const uploadTask = audioRef.put(selectedAudioFile);
+                
+                // Следим за прогрессом загрузки
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progress.style.width = progressValue + '%';
+                    },
+                    (error) => {
+                        console.error('Ошибка загрузки:', error);
+                        alert('Ошибка загрузки файла: ' + error.message);
+                        resetUploadForm();
+                    },
+                    async () => {
+                        // Загрузка завершена
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        
+                        // Создаем пост с аудио
+                        const post = {
+                            id: 'post_' + Date.now(),
+                            userId: currentUser.id,
+                            userName: currentUser.name,
+                            userAvatar: currentUser.avatar,
+                            text: description,
+                            mediaType: 'audio',
+                            mediaUrl: downloadURL,
+                            fileName: selectedAudioFile.name,
+                            fileSize: selectedAudioFile.size,
+                            timestamp: Date.now(),
+                            likes: 0,
+                            comments: 0,
+                            shares: 0
+                        };
+                        
+                        await database.ref('posts').push(post);
+                        
+                        alert('Аудио успешно загружено!');
+                        closeModal('mediaModal');
+                        resetUploadForm();
+                    }
+                );
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при загрузке');
+                resetUploadForm();
+            }
+        }
+
+        function resetUploadForm() {
+            selectedAudioFile = null;
+            document.getElementById('audioInput').value = '';
+            document.getElementById('audioDescription').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('progressBar').style.display = 'none';
+            document.getElementById('progress').style.width = '0%';
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('uploadBtn').textContent = 'Загрузить аудио';
         }
 
         function switchSection(sectionName) {
-            // Скрываем все секции
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Убираем активный класс у всех пунктов меню
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Показываем выбранную секцию
             document.getElementById(sectionName + 'Section').classList.add('active');
-            
-            // Добавляем активный класс к выбранному пункту меню
             event.target.closest('.nav-item').classList.add('active');
         }
 
         function showMediaModal() {
-            currentMediaType = 'text';
+            resetUploadForm();
             document.getElementById('mediaModal').style.display = 'flex';
-            document.querySelectorAll('.media-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-        }
-
-        function selectMediaType(type) {
-            currentMediaType = type;
-            document.querySelectorAll('.media-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            event.target.closest('.media-option').classList.add('selected');
         }
 
         function showForumModal() {
@@ -885,9 +951,8 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        function publishPost() {
-            const postText = document.getElementById('postText').value.trim() || 
-                           document.getElementById('mediaDescription').value.trim();
+        function publishTextPost() {
+            const postText = document.getElementById('postText').value.trim();
             
             if (!postText) {
                 alert('Добавьте текст поста!');
@@ -900,7 +965,7 @@
                 userName: currentUser.name,
                 userAvatar: currentUser.avatar,
                 text: postText,
-                mediaType: currentMediaType,
+                mediaType: 'text',
                 timestamp: Date.now(),
                 likes: 0,
                 comments: 0,
@@ -908,11 +973,7 @@
             };
             
             database.ref('posts').push(post);
-            
             document.getElementById('postText').value = '';
-            document.getElementById('mediaDescription').value = '';
-            closeModal('mediaModal');
-            
             alert('Пост опубликован!');
         }
 
@@ -932,8 +993,7 @@
                 author: currentUser.name,
                 authorAvatar: currentUser.avatar,
                 timestamp: Date.now(),
-                postsCount: 0,
-                lastActivity: Date.now()
+                postsCount: 0
             };
             
             database.ref('forums').push(forum);
@@ -941,19 +1001,20 @@
             document.getElementById('forumTitle').value = '';
             document.getElementById('forumDescription').value = '';
             closeModal('forumModal');
-            
             alert('Тема форума создана!');
         }
 
         function loadPosts() {
-            database.ref('posts').limitToLast(20).once('value', (snapshot) => {
+            database.ref('posts').orderByChild('timestamp').limitToLast(20).once('value', (snapshot) => {
                 const posts = snapshot.val();
                 const postsFeed = document.getElementById('postsFeed');
                 
                 if (posts && Object.keys(posts).length > 0) {
                     postsFeed.innerHTML = '';
                     Object.values(posts).forEach(post => {
-                        displayPost(post);
+                        if (post.mediaType === 'audio') {
+                            displayPost(post);
+                        }
                     });
                 }
             });
@@ -962,7 +1023,6 @@
         function displayPost(post) {
             const postsFeed = document.getElementById('postsFeed');
             
-            // Убираем сообщение "нет постов" если оно есть
             if (postsFeed.querySelector('.empty-state')) {
                 postsFeed.innerHTML = '';
             }
@@ -971,17 +1031,13 @@
             postDiv.className = 'post';
             
             let mediaContent = '';
-            if (post.mediaType !== 'text') {
-                const mediaIcons = {
-                    'photo': '📷',
-                    'video': '📹', 
-                    'audio': '🎵'
-                };
-                
+            if (post.mediaType === 'audio' && post.mediaUrl) {
                 mediaContent = `
-                    <div class="post-media">
-                        <div class="media-placeholder">${mediaIcons[post.mediaType]}</div>
-                        <div>${post.mediaType === 'photo' ? 'Фотография' : post.mediaType === 'video' ? 'Видео' : 'Аудиозапись'}</div>
+                    <div class="audio-player">
+                        <audio controls>
+                            <source src="${post.mediaUrl}" type="audio/mpeg">
+                            Ваш браузер не поддерживает аудио элемент.
+                        </audio>
                     </div>
                 `;
             }
@@ -1009,6 +1065,62 @@
             `;
             
             postsFeed.appendChild(postDiv);
+        }
+
+        function loadMusic() {
+            database.ref('posts').orderByChild('timestamp').limitToLast(10).once('value', (snapshot) => {
+                const posts = snapshot.val();
+                const musicList = document.getElementById('musicList');
+                
+                if (posts && Object.keys(posts).length > 0) {
+                    musicList.innerHTML = '';
+                    Object.values(posts).forEach(post => {
+                        if (post.mediaType === 'audio') {
+                            updateMusicList(post);
+                        }
+                    });
+                }
+            });
+        }
+
+        function updateMusicList(post) {
+            const musicList = document.getElementById('musicList');
+            const recentMusic = document.getElementById('recentMusic');
+            
+            if (musicList.querySelector('.empty-state')) {
+                musicList.innerHTML = '';
+            }
+            
+            if (recentMusic.querySelector('div') && !recentMusic.querySelector('.music-item')) {
+                recentMusic.innerHTML = '';
+            }
+            
+            const musicItem = document.createElement('div');
+            musicItem.className = 'music-item';
+            musicItem.innerHTML = `
+                <div class="music-cover">🎵</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600;">${post.text}</div>
+                    <div style="color: #65676b; font-size: 12px;">${post.userName}</div>
+                </div>
+                <audio controls style="width: 200px; height: 40px;">
+                    <source src="${post.mediaUrl}" type="audio/mpeg">
+                </audio>
+            `;
+            
+            musicList.appendChild(musicItem);
+            
+            // Добавляем в недавнюю музыку (только 3 последних)
+            if (!document.querySelector(`[data-audio-id="${post.id}"]`)) {
+                const recentItem = musicItem.cloneNode(true);
+                recentItem.setAttribute('data-audio-id', post.id);
+                recentMusic.appendChild(recentItem);
+                
+                // Ограничиваем количество до 3
+                if (recentMusic.children.length > 3) {
+                    recentMusic.removeChild(recentMusic.firstChild);
+                }
+            }
         }
 
         function loadForums() {
@@ -1040,14 +1152,35 @@
             forumsList.appendChild(forumDiv);
         }
 
-        function playMedia(type) {
-            alert(`Воспроизведение ${type === 'video' ? 'видео' : 'аудио'}...`);
-        }
-
-        function searchContent(query) {
-            if (query.length > 2) {
-                alert(`Поиск: ${query}`);
-            }
+        function createDemoData() {
+            // Создаем демо форумы если их нет
+            database.ref('forums').once('value').then(snapshot => {
+                if (!snapshot.val()) {
+                    const demoForums = [
+                        {
+                            title: "🎵 Музыкальные обсуждения",
+                            description: "Обсуждаем музыку, треки и исполнителей",
+                            author: "Администратор",
+                            authorAvatar: "A"
+                        },
+                        {
+                            title: "💻 Технологии", 
+                            description: "Все о технологиях и программировании",
+                            author: "Администратор",
+                            authorAvatar: "A"
+                        }
+                    ];
+                    
+                    demoForums.forEach(forum => {
+                        database.ref('forums').push({
+                            ...forum,
+                            id: 'forum_' + Date.now(),
+                            timestamp: Date.now(),
+                            postsCount: 0
+                        });
+                    });
+                }
+            });
         }
 
         function likePost(postId) {
